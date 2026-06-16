@@ -3,7 +3,7 @@ from . models import Hotel
 
 
 def hotel_list(request):
-    city = request.GET.get('city')
+    city = request.GET.get('city', '')
     hotels = Hotel.objects.all()
 
     # Фильтрация по городу
@@ -12,4 +12,5 @@ def hotel_list(request):
 
     return render(request, 'hotels/list.html', {
         'hotels': hotels,
-    })
+        'city': city
+        })
