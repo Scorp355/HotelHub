@@ -8,7 +8,7 @@ def hotel_list(request):
 
     # Фильтрация по городу
     if city:
-        hotels = hotels.filter(city__icontains=city)
+        hotels = [h for h in hotels if city.lower() in h.city.lower()]
 
     return render(request, 'hotels/list.html', {
         'hotels': hotels,
