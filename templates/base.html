@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Заголовок {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<header class="header">
+    {% block header %}
+    <h1>HotelHub</h1>
+    {% endblock %}
+</header>
+
+<main class="container">
+    {% block content %}
+    {# Контент #}
+    {% endblock %}
+</main>
+
+<footer class="footer">
+    {% block footer %}
+    <p>©</p>
+    {% endblock %}
+</footer>

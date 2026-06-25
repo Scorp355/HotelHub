@@ -23,8 +23,6 @@ def rooms_list(request):
         'form': form
     })
 
-
-
     # query = request.GET.get('q', '')
 
     # rooms = Room.objects.all()
