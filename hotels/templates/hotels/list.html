@@ -1,12 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отели</title>
-    <link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">qui
+    <link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
 </head>
+
 <body>
 
     <header class="header">
@@ -18,36 +20,38 @@
     <main class="container">
 
         <form method="get" class="search-form">
-            <input type="text" name="city" value="{{ city }}" placeholder="Введите город, например, Астана" class="search-input">
+            <input type="text" name="city" value="{{ city }}" placeholder="Введите город, например, Астана"
+                class="search-input">
             <button type="submit" class="search-btn">Искать</button>
         </form>
 
         {% if hotels %}
-            <div class="hotel-grid">
-                {% for hotel in hotels %}
-                    <article class="hotel-card">
-                    
-                        <h2 class="hotel-name">{{ hotel.name }}</h2>                
-                        <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
-                    
-                        {% if hotel.description %}
-                            <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
-                        {% endif %}
+        <div class="hotel-grid">
+            {% for hotel in hotels %}
+            <article class="hotel-card">
 
-                        <div class="hotel-meta">
-                            <span class="hotel-price">${{ hotel.price }} ₸/ночь</span>
-                            <span class="hotel-rating">★ {{ hotel.rating }}</span>
-                        </div>
-                    
-                    </article>       
-                {% endfor %}  
-        </div>  
+                <h2 class="hotel-name">{{ hotel.name }}</h2>
+                <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
+
+                {% if hotel.description %}
+                <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
+                {% endif %}
+
+                <div class="hotel-meta">
+                    <span class="hotel-price">${{ hotel.price }} ₸/ночь</span>
+                    <span class="hotel-rating">★ {{ hotel.rating }}</span>
+                </div>
+
+            </article>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="empty">
-                <p class="empty">Отели не найдены, попробуйте изменить свой поисковый запрос.</p>
-            </div>
+        <div class="empty">
+            <p class="empty">Отели не найдены, попробуйте изменить свой поисковый запрос.</p>
+        </div>
         {% endif %}
 
     </main>
 </body>
+
 </html>
