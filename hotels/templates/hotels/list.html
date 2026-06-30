@@ -1,57 +1,55 @@
+{% extends 'base.html' %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Отели</title>
-    <link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
-</head>
 
-<body>
+{% block title %}Отели{% endblock %}
 
-    <header class="header">
-        <h1>HotelHub</h1>
-        <p>Поиск и бронирование отелей</p>
-    </header>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
+{% endblock %}
 
 
-    <main class="container">
 
-        <form method="get" class="search-form">
-            <input type="text" name="city" value="{{ city }}" placeholder="Введите город, например, Астана"
-                class="search-input">
-            <button type="submit" class="search-btn">Искать</button>
-        </form>
+{% block header %}
+<h1>HotelHub</h1>
+<p>Поиск и бронирование отелей</p>
+{% endblock %}
 
-        {% if hotels %}
-        <div class="hotel-grid">
-            {% for hotel in hotels %}
-            <article class="hotel-card">
 
-                <h2 class="hotel-name">{{ hotel.name }}</h2>
-                <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
+{% block content %}
 
-                {% if hotel.description %}
-                <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
-                {% endif %}
+<form method="get" class="search-form">
+    <input type="text" name="city" value="{{ city }}" placeholder="Введите город, например, Астана"
+        class="search-input">
+    <button type="submit" class="search-btn">Искать</button>
+</form>
 
-                <div class="hotel-meta">
-                    <span class="hotel-price">${{ hotel.price }} ₸/ночь</span>
-                    <span class="hotel-rating">★ {{ hotel.rating }}</span>
-                </div>
+{% if hotels %}
+<div class="hotel-grid">
+    {% for hotel in hotels %}
+    <article class="hotel-card">
 
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty">
-            <p class="empty">Отели не найдены, попробуйте изменить свой поисковый запрос.</p>
-        </div>
+        <h2 class="hotel-name">{{ hotel.name }}</h2>
+        <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
+
+        {% if hotel.description %}
+        <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
         {% endif %}
 
-    </main>
-</body>
+        <div class="hotel-meta">
+            <span class="hotel-price">${{ hotel.price_night }} ₸/ночь</span>
+            <span class="hotel-rating">★ {{ hotel.rating }}</span>
+        </div>
 
-</html>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    <p class="empty">Отели не найдены, попробуйте изменить свой поисковый запрос.</p>
+</div>
+{% endif %}
+
+{% endblock %}

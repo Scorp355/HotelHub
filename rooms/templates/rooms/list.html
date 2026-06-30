@@ -1,61 +1,54 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ru">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'rooms/css/style.css' %}">
-</head>
+{% block title %}Номера{% endblock %}
 
-<body>
 
-    <header class="header">
-        <h1>HotelHub</h1>
-        <p>Поиск и бронирование отелей</p>
-    </header>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'rooms/css/style.css' %}">
+{% endblock %}
 
-    <main class="container">
 
-        <form method="get" class="search-form">
-            <p class="room_search">Поиск номеров: </p>
-            <div class="search-container">
-                {{ form.room }}
-                <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
-                    placeholder="Введите название отеля...">
-                <button type="submit" class="search-btn">Найти</button>
-            </div>
-        </form>
+{% block header %}
+<h1>HotelHub</h1>
+<p>Поиск и бронирование номера</p>
+{% endblock %}
 
-        {% if rooms %}
-        <div class="rooms-grid">
-            {% for room in rooms %}
-            {% if room.is_available %}
-            <article class="room-card">
-                <h2 class="hotel-name">{{ room.hotel.name }} ★{{room.hotel.rating}}</h2>
-                <p class="hotel-city">{{ room.hotel.city }}, {{ room.hotel.address }}</p>
-                <p class="room_type">Тип номера: {{ room.get_room_type_display }}</p>
-                <p class="room-number">Номер {{ room.number }}</p>
-                <p class="room_capacity">Мест: {{ room.capacity }}</p>
-                {% if room.description %}
-                <p class="room-desc">{{ room.description|truncatechars:64 }}</p>
-                {% endif %}
-                <div class="room-meta">
-                    <span class="room-price">{{ room.price_night }} ₸/ночь</span>
-                </div>
-            </article>
-            {% endif %}
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty">
-            <p class="empty">Номера отелей не найдены, попробуйте изменить свой поисковый запрос.</p>
-        </div>
+
+{% block content %}
+<form method="get" class="search-form">
+    <p class="room_search">Поиск номеров: </p>
+    <div class="search-container">
+        {{ form.room }}
+        <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
+            placeholder="Введите название отеля...">
+        <button type="submit" class="search-btn">Найти</button>
+    </div>
+</form>
+
+{% if rooms %}
+<div class="rooms-grid">
+    {% for room in rooms %}
+    {% if room.is_available %}
+    <article class="room-card">
+        <h2 class="hotel-name">{{ room.hotel.name }} ★{{room.hotel.rating}}</h2>
+        <p class="hotel-city">{{ room.hotel.city }}, {{ room.hotel.address }}</p>
+        <p class="room_type">Тип номера: {{ room.get_room_type_display }}</p>
+        <p class="room-number">Номер {{ room.number }}</p>
+        <p class="room_capacity">Мест: {{ room.capacity }}</p>
+        {% if room.description %}
+        <p class="room-desc">{{ room.description|truncatechars:64 }}</p>
         {% endif %}
-
-    </main>
-
-</body>
-
-</html>
+        <div class="room-meta">
+            <span class="room-price">{{ room.price_night }} ₸/ночь</span>
+        </div>
+    </article>
+    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    <p class="empty">Номера отелей не найдены, попробуйте изменить свой поисковый запрос.</p>
+</div>
+{% endif %}
+{% endblock %}
