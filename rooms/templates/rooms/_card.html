@@ -1,0 +1,39 @@
+{# load humanize #}
+
+<article class="card room-card">
+    <div class="card-head">
+        <h2 class="card-title">Номер {{ room.number }}</h2>
+        {% if room.is_available %}
+            <span class="badge badge-success">Свободен</span>
+        {% else %}
+            <span class="badge badge-danger">Занят</span>
+        {% endif %}
+    </div>
+
+    <p class="card-subtitle">{{ room.hotel.name }} ★{{room.hotel.rating}}, {{ room.hotel.city }}</p>
+    <p class="room_type">Тип номера: {{ room.get_room_type_display }}</p>
+    <p class="room_capacity">Мест: {{ room.capacity }}</p>
+    {% if room.description %}
+    <p class="room-desc">{{ room.description|truncatechars:64 }}</p>    
+    {% endif %}
+
+    <div class="card-meta">
+        <span class="price">{{ room.price_night }} ₸/ночь</span>
+    </div>
+</article>
+
+
+
+<!-- <article class="room-card">
+    <h2 class="hotel-name">{{ room.hotel.name }} ★{{room.hotel.rating}}</h2>
+    <p class="hotel-city">{{ room.hotel.city }}, {{ room.hotel.address }}</p>
+    <p class="room_type">Тип номера: {{ room.get_room_type_display }}</p>
+    <p class="room-number">Номер {{ room.number }}</p>
+    <p class="room_capacity">Мест: {{ room.capacity }}</p>
+    {% if room.description %}
+    <p class="room-desc">{{ room.description|truncatechars:64 }}</p>
+    {% endif %}
+    <div class="room-meta">
+        <span class="room-price">{{ room.price_night }} ₸/ночь</span>
+    </div>
+</article> -->

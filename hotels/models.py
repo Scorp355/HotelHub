@@ -16,12 +16,12 @@ class Hotel(models.Model):
     def __str__(self):
         return self.name
 
-class Meta:
-    # Название модели в единственном числе
-    verbose_name = 'Отель'
-    # Название модели во множественном числе
-    verbose_name_plural = 'Отели'
-    ordering = ['-created_at']
+    class Meta:
+        # Название модели в единственном числе
+        verbose_name = 'Отель'
+        # Название модели во множественном числе
+        verbose_name_plural = 'Отели'
+        ordering = ['-created_at']
 
 
     

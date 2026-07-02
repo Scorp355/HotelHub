@@ -1,0 +1,13 @@
+{% load static %}
+<header class="navbar">
+    <div class="container">
+        <a href="{% url 'hotel_list' %}" class="logo">HotelHub</a>
+        <nav class="nav">
+            <a href="{% url 'hotel_list' %}"
+                class="{% if request.resolver_match.url_name == 'hotel_list' %}active{% endif %}">Отели</a>
+            <a href="{% url 'room_list' %}"
+                class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Номера</a>
+            <a href="/admin/">Админка</a>
+        </nav>
+    </div>
+</header>

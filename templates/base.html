@@ -5,27 +5,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Заголовок {% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %} {# Заголовок #} {% endblock %}</title>
+    {# Глобальные стили проекта#}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {# Стили конкретной страницы - добавляются в дочерних шаблонах #}
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
-    <header class="header">
-        {% block header %}
-        <h1>HotelHub</h1>
-        {% endblock %}
-    </header>
+<body class="{% block body_class %}{% endblock %}">
+        
+    {% block header %}
+        {% include 'includes/navbar.html' %}
+    {% endblock %}  
+    
+    
+    {% block page_header %}
+        <section class="page-header">
+            <div class="container">
+                <h1>{% block page_title %} HotelHub {% endblock %}</h1>
+                <p>{% block page_subtitle %}{% endblock %}</p>
+            </div>
+        </section>
+    {% endblock %}
+
 
     <main class="container">
         {% block content %}
         {# Контент #}
         {% endblock %}
     </main>
-</body>
 
-<footer class="footer">
+
     {% block footer %}
-    <p>©</p>
+    {% include 'includes/footer.html' %}
     {% endblock %}
-</footer>
+
+
+{# Глобальный скрипт проекта #}
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>

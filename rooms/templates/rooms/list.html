@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Номера{% endblock %}
+{% block title %}HotelHub - Номера{% endblock %}
+
+{% block body_class %}theme-rooms{% endblock %}
 
 
 {% block extra_css %}
@@ -9,10 +11,8 @@
 {% endblock %}
 
 
-{% block header %}
-<h1>HotelHub</h1>
-<p>Поиск и бронирование номера</p>
-{% endblock %}
+{% block page_title %} Номера {% endblock %}
+{% block page_subtitle %}Выбор номеров в отелях HotelHub{% endblock %}
 
 
 {% block content %}
@@ -29,21 +29,7 @@
 {% if rooms %}
 <div class="rooms-grid">
     {% for room in rooms %}
-    {% if room.is_available %}
-    <article class="room-card">
-        <h2 class="hotel-name">{{ room.hotel.name }} ★{{room.hotel.rating}}</h2>
-        <p class="hotel-city">{{ room.hotel.city }}, {{ room.hotel.address }}</p>
-        <p class="room_type">Тип номера: {{ room.get_room_type_display }}</p>
-        <p class="room-number">Номер {{ room.number }}</p>
-        <p class="room_capacity">Мест: {{ room.capacity }}</p>
-        {% if room.description %}
-        <p class="room-desc">{{ room.description|truncatechars:64 }}</p>
-        {% endif %}
-        <div class="room-meta">
-            <span class="room-price">{{ room.price_night }} ₸/ночь</span>
-        </div>
-    </article>
-    {% endif %}
+        {% include 'rooms/_card.html' %}    
     {% endfor %}
 </div>
 {% else %}
