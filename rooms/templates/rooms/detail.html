@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block title %}Номер {{ room.number }} - HotelHub{% endblock %}
+
+{% block body_class %}theme-rooms{% endblock %}
+
+{% block extra css %}
+<link rel="stylesheet" href="{% static 'rooms/css/style.css' %}">
+{% endblock %}
+
+{% block page_title %}Номер {{ room.number }}{% endblock %}
+
+{% block page_subtitle %}{{ room.hotel.name }}, {{ room.hotel.city }}{% endblock %}
+
+{% block content %}
+<div class="detail">
+    <div class="card-head">
+        <h2 class="detail-heading">{{ room.get_room_type_display }}</h2>
+
+        {% if room.is_available %}
+            <span class="badge badge-success">Свободен</span>
+        {% else %}
+            <span class="badge badge-danger">Занят</span>
+        {% endif %}
+    </div>
+
+    <p class="card-subtitle">До {{ room.caoacity }} гостей</p>
+
+    {% if room.description %}
+        <p class="detail-desc">{{ room.description }}</p>
+    {% endif %}
+
+    <div class="detail-meta">
+        <span class="price">{{ room.price_night|intcomma }} ₸/ночь</span>
+    </div>
+
+    {% if room.is_available %}
+        {% if user.is_authentificated %}
+            <a href="{% url 'bookings:create' room.id %}" class="btn">Забронировать</a>
+        {% else %}
+            <a href="{% url 'users:login' %}?next={% url 'bookings:create' room.id %}" class="btn">
+                Войдите, чтобы забранировать
+            </a>            
+        {% endif %}
+    {% endif %}
+
+    <p class="back-link"><a href="{% url 'rooms:room_list' %}">🠔 Ко всем номерам</a></p>
+</div>
+{% endblock %}
