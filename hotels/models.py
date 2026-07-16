@@ -6,15 +6,12 @@ class Hotel(models.Model):
     description = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
-
     # Цена за 1 ноч проживания
     price_night = models.DecimalField(max_digits=10, decimal_places=2)
     rating = models.FloatField(default=0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
+    
 
     class Meta:
         # Название модели в единственном числе
@@ -22,6 +19,10 @@ class Hotel(models.Model):
         # Название модели во множественном числе
         verbose_name_plural = 'Отели'
         ordering = ['-created_at']
+
+
+    def __str__(self):
+        return self.name
 
 
     

@@ -1,4 +1,15 @@
-* {
+body.theme-hotels {
+    --theme-accent: var(--color-primary);
+    --theme-accent-dark: var(--color-primary-dark)
+}
+
+body.theme-hotels .rating {
+    color: var(--color-accent);
+}
+
+
+
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -79,7 +90,7 @@ body {
 }
 
 
-.hotel-grid {
+.card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
@@ -140,4 +151,4 @@ body {
     text-align: center;
     color: #5f5e5a;
     padding: 48px 0;
-}
+} */

@@ -1,0 +1,37 @@
+{% load humanize %}
+{# Карточка отеля - клиабельная - ведет на страницу отеля#}
+
+
+<article class="card hotel-card">
+    <h2 class="card-title">
+        <a href="{% url 'hotels:hotel_detail' hotel.id %}">{{ hotel.name }}</a>
+    </h2>
+    <p class="card-subtitle">{{hotel.city }}, {{ hotel.address }}</p>
+
+    {% if hotel.description %}
+    <p class="card-desc">{{ hotel.description|truncatechars:120 }}</p>
+    {% endif %}
+
+    <div class="card-meta">
+        <span class="price">${{ hotel.price_night }} ₸/ночь</span>
+        <span class="rating">★ {{ hotel.rating }}</span>
+    </div>
+</article>
+
+
+
+<!-- <article class="card hotel-card">
+
+        <h2 class="hotel-name">{{ hotel.name }}</h2>
+        <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
+
+        {% if hotel.description %}
+        <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
+        {% endif %}
+
+        <div class="hotel-meta">
+            <span class="hotel-price">${{ hotel.price_night }} ₸/ночь</span>
+            <span class="hotel-rating">★ {{ hotel.rating }}</span>
+        </div>
+
+    </article> -->

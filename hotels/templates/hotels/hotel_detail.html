@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block title %}
+{{hotel.name}} - HotelHub
+{% endblock %}
+
+
+{% block body_class %}theme-hotels{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
+{% endblock %}
+
+
+{% block header %}
+<h1>{{ hotel.name }}</h1>
+<p>{{ hotel.city }}, {{ hotel.address }}</p>
+{% endblock %}
+
+
+{% block content %}
+<div class="detail">
+    <div class="detail-meta">
+        <span class="price">{{ hoyel.price|incomma }} ₸/ночь</span>
+        <span class="rating">★{{ hotel.rating\floatformat:1 }}</span>
+    </div>
+    {% if {{hotel.description}} %}
+        <p class="detail-desc">{{ hotel.description }}</p>
+    {% endif %}
+
+    <h2 class="detail-heading">
+        Номера этого отеля
+    </h2>
+
+    {% if rooms %}
+    <div>
+        {% for room in rooms %}
+            {% include 'rooms/_card.html' %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">Свободных номеров сейчас нет</p>
+    {% endif %}
+    <p class="back-link"><a href="{% url 'hotels:hotel_list' %}">← Ко всем отелям</a></p>
+</div>
+{% endclock %}

@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
 
-{% block title %}Отели{% endblock %}
+{% block title %}HotelHub - поиск отелей{% endblock %}
+
+{% block body_class %}theme-hotels{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
 {% endblock %}
-
 
 
 {% block header %}
@@ -19,7 +18,6 @@
 
 
 {% block content %}
-
 <form method="get" class="search-form">
     <input type="text" name="city" value="{{ city }}" placeholder="Введите город, например, Астана"
         class="search-input">
@@ -27,23 +25,9 @@
 </form>
 
 {% if hotels %}
-<div class="hotel-grid">
+<div class="card-grid">
     {% for hotel in hotels %}
-    <article class="hotel-card">
-
-        <h2 class="hotel-name">{{ hotel.name }}</h2>
-        <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
-
-        {% if hotel.description %}
-        <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
-        {% endif %}
-
-        <div class="hotel-meta">
-            <span class="hotel-price">${{ hotel.price_night }} ₸/ночь</span>
-            <span class="hotel-rating">★ {{ hotel.rating }}</span>
-        </div>
-
-    </article>
+        {% include 'hotels/_card.html' with hotel=hotel %}    
     {% endfor %}
 </div>
 {% else %}
