@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Room
 from .forms import RoomTypesFiter
 
 
+# Обрабатывает запрос пользователя и возвращает страницу со списком номеров
 def rooms_list(request):
 
     form = RoomTypesFiter(request.GET)
@@ -22,6 +23,15 @@ def rooms_list(request):
         'rooms': rooms,
         'form': form
     })
+
+
+def room_detail(request, pk):
+    """Страница одного номера с кнопкой бронирования"""
+    room = get_object_or_404(Room, pk=pk)
+    return render(request, 'rooms/detail.html', {'room': room})
+
+
+
 
     # query = request.GET.get('q', '')
 
