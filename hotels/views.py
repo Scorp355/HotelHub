@@ -33,6 +33,8 @@ def hotel_detail(request, pk):
         )
     # получаем свободные номера выбранного отеля
     rooms = hotel.rooms.filter(is_available=True)
-    return render(request, 'hotel_detail.html', {'hotel': hotel, 'rooms': rooms})
+    return render(request, 'hotel_detail.html', {
+        'hotel': hotel, 'rooms': rooms
+        })
     
 
