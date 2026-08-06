@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-
+# Пространство имен приложения
 app_name = 'users'
 
 urlpatterns = [

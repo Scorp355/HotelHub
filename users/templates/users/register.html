@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{# Заголовок #}
+{% block title %}Регистрация — HotelHub{% endblock %}
+
+{% block page_title%}Создание аккаунта{% endblock %}
+{% block page_subtitle%}Зарегистрируйтесь, чтобы бронировать номера{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <form method="post" novalidate>
+        {# SSRF - токен: защищает приложение от подделки POST-запросов. Обязателен во всех формах #}
+        {% csrf_token %}
+        {# Выводим все поля последовательно #}
+        {% for field in form %}
+            <div class="form-row">
+                <label for="{{ field.id_for_field }}">{{ field.label }}</label>
+                {{ field }}
+                
+                {% if field.help_text %}
+                    <small class="form-hint">{{ field.help_text|safe }}</small>
+                {% endif %}
+
+                {# Ошибки, относящиеся к текущему полю #}
+                {% for error in field.errors %}
+                    <small class="form-error">{{ error }}</small>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {# Кнопка отправки формы регистрации #}
+        <button type="submit" class="btn">Зарегистрироваться</button>
+    </form>
+
+    {# Ссылка для пользователей, у которых уже есть аккаунт #}
+    <p class="form-alt">
+        Уже есть аккаунт? <a href="{% url 'users:login' %}">Войти</a>
+    </p>
+</div>
+{% endblock %}
