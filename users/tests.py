@@ -1,3 +1,12 @@
 from django.test import TestCase
 
-# Create your tests here.
+"""
+Тесты приложения пользователей:
+1. Проверяем кастомную модель User(поля phone/avatar
+2. Сценарий регистрации
+    - с автовходом
+    - вход-выход
+    - защита профиля
+    - сидер seed_user
+"""
+
