@@ -54,9 +54,38 @@
         {# Проверяем, есть ли у пользователя бронирования #}
         {% if bookings %}
             {# Контейнер для списка бронирования #}
-            <div class="">
-                
+            <div class="booking-list">
+                {# Переберем все бронирования пользователя #}
+                {% for booking in bookings %}
+                    
+                    {# Одна строка с информацией о бронировании #}
+                    <article class="booking-row status-{{ booking.status }}">
+                        <div>
+                            {# Название отлея и номер забронированной комнаты #}
+                            <b>{{ booking.room.hotel.name }}</b>
+                            номер {{ booking.room.number }}
+                            <br>
+                            {# Даты проживания, кол-во ночей и общая стоимость бронирования #}
+                            <small>
+                                {{ booking.check_in|date:"d.m.Y" }} — {{ booking.check-out|date:"d.m.Y" }}
+                                • {{ booking.night }} ноч.
+                                • {{ booking.total_orice|intcomma }} ₸
+                            </small>                            
+                        </div>
+
+                        {# get_status_display - название статуса для пользователя #}
+                        <span class="badge">{{ booking.get_status_display }}</span>
+
+                    </article>
+                {% endfor %}
             </div>
+        {% else %}
+            {# Если бронирований нет, то показываем сообщение и ссылку на страницу с выбором номера #}
+            <p class="empty">
+                У вас пока нет бронирований.
+                <a href="{% url 'rooms:room_list' %}">Выбрать номер</a>
+            </p>
+        {% endif %}
     </section>
 </div>
 {% endblock %}

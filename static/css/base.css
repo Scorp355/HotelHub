@@ -627,3 +627,14 @@ a:hover {
     margin-bottom: 20px;
     font-size: 14px;
 }
+
+/* Адаптивность для новых блоков */
+@media(max-width: 700pz){
+    .profile{
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1{
+        font-size: 28px;
+    }
+}

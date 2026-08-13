@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
 
@@ -6,4 +7,6 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = User
+        # Порядок полей в форме = порядок в этом кореже
         fields = ('username', 'email', 'phone', 'password1', 'password2')
+    
