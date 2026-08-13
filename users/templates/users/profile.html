@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Профиль - HotelHub{% endblock %}
+
+{% block page_title%}Личный кабинет{% endblock %}
+{% block page_subtitle%}Ваши данные и бронирование{% endblock %}
+
+{% block content %}
+{# Основной контейнер станицы профиля #}
+<div class="profile">
+    {# Левая часть профиля - информация о пользователе #}
+    <aside class="profile-card">
+        
+        {# Если у пользователя загружен аватар - показываем его #}
+        {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" alt="Аватар" class="avatar">
+        {% else %}
+            {# Если аватара нет - показываем заглушку с первой буквой имени пользователя #}
+            <div class="avatar avatar-placeholder">
+                {{ profile_user.username.0|upper }}
+            </div>
+        {% endif %}
+
+        {# Имя пользователя #}
+        <h2 class="profile-name">{{ profile_user.usernsme }}</h2>
+        {# Основные данные пользователя #}
+        <ul class="profile-fields">
+            {# email пользователя #}
+            {# Если email отсутствует - показываем длинное тире #}
+            <li>
+                <span>Email</span>
+                <b>{{ profile_user.email|default:'—' }}</b>
+            </li>
+            {# Номер телефона #}
+            <li>
+                <span>Телефон</span>
+                <b>{{ profile_user.phone|default:'—' }}</b>
+            </li>
+            {# Дата регистрации #}
+            <li>
+                <span>Дата регистрации</span>
+                <b>{{ profile_user.date_joined|date:"d.m.Y" }}</b>
+            </li>
+        </ul>
+        
+        {# Ссылка для выхода из аккаунта #}
+        <a href="{% url 'users:logout' %}" class="btn btn-outline">Выйти</a>
+    </aside>
+
+    {# Правая часть профиля - список бронирований пользователя #}
+    <section class="profile-bookings">
+        <h3>Мои бронирования</h3>
+        {# Проверяем, есть ли у пользователя бронирования #}
+        {% if bookings %}
+            {# Контейнер для списка бронирования #}
+            <div class="">
+                
+            </div>
+    </section>
+</div>
+{% endblock %}

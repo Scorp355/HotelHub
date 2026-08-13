@@ -69,6 +69,6 @@ def profile_view(request):
     # Данные текущего пользователя всегда доступны через request.user, поэтому не необходимости делать запрос к БД
     bookings = request.user.bookings.select_related('room', 'room__hotel').all()
     return render(request, 'users/profile.html', {
-            'profile__user': request.user,
+            'profile_user': request.user,
             'bookings': bookings
         })
