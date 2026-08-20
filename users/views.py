@@ -59,7 +59,7 @@ def logout_view(request):
     logout(request)
     # Показываем информационное сообщение
     messages.info(request, 'Вы вышли из аккаунта')
-    return redirect('core:home')
+    # return redirect('core:home')
 
 
 @login_required
