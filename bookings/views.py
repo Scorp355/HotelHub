@@ -15,6 +15,7 @@ def booking_list(request):
     return render(request, 'bookings/list.html', {'bookings': bookings})
 
 
+@login_required
 def booking_create(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
 
@@ -39,4 +40,17 @@ def booking_create(request, room_id):
         form = BookingForm(initial={'room': room})
     
     return render(request, 'bookings/create.html', {'form': form, 'room': room})
+
+
+@login_required
+def booking_cansel(request, pk):
+    booking = get_object_or_404(Booking, pk=pk, user=request.user)
+
+    try:
+        services.cansel_booking(booking)
+        messages.info(request, f'Бронь {booking.pk} отменена')
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+
+    return redirect('bookings:list')
             
