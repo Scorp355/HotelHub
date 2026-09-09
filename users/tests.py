@@ -87,7 +87,7 @@ class AuthFlowTests(TestCase):
         self.assertRedirects(reverse('core:home'))
 
 
-    def test_ligin_wrong_password(self):
+    def test_login_wrong_password(self):
         User.objects.create_user(username='guest', password='pass12345')
         resp = self.client.post(reverse('users:login'), {
                 'usernsme': 'guest',

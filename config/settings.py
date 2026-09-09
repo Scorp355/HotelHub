@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     # Приложения проекта
-    'core.apps.CoreConfig',
+    # 'core.apps.CoreConfig',
     'users.apps.UsersConfig',
     'hotels.apps.HotelsConfig',
     'rooms.apps.RoomsConfig',
