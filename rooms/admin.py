@@ -18,6 +18,7 @@ fields = (
         'description',
         'is_available'
     )
+
 def short_description(self, obj):
     # Если описание отсутствуе - выводим прочерк
     if not obj.description:

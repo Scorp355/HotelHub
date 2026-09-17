@@ -7,7 +7,7 @@ class PromoOffer(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название акции')     # Заголовок акции
     description = models.TextField(verbose_name='Описание')     # Описание
     discount_percent = models.PositiveIntegerField(null=True, blank=True, verbose_name='Скидка %')      # Размер скидки в процентах    
-    valid_unil = models.DateField(null=True, blank=True, verbose_name='Действует до')       # Срок действия - до какой даты
+    valid_until = models.DateField(null=True, blank=True, verbose_name='Действует до')       # Срок действия - до какой даты
     is_active = models.BooleanField(default=True, verbose_name='Активно')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -83,3 +83,4 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f'Сообщение от {self.name} ({self.subject})'
+    
