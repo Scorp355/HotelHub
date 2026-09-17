@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %} <link rel="stylesheet" href="{% static 'core/css/core.css' %}"> {% endblock %}
+
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Искусство отдыха</h1>
+            <p class="hero-subtitle">Премиальный комфорт в каждой детали</p>            
+        </div>        
+    </div>  
+</section>
+
+{# Дашборд поиска (связь с модулем rooms) #}
+<form class="search-dashboard" action="{% url 'rooms:list' %}" method="get">
+    <input type="date" name="check_in" required title="Дата заезда" placeholder="Заезд">
+    <input type="date" name="check_out" required title="Дата выезда" placeholder="Выезд">
+    <button type="submit" class="btn-accent">Найти номер</button>
+</form>
+
+{# Инфраструктура #}
+<section class="content-section">
+    <h2 class="section-heading">Инфраструктура</h2>
+    <div class="grid-layout facilities-grid">
+        {% for facility in facilities %}
+            <div class="card premium-card text-center">
+                <div class="icon-wrapper">
+                    <i class="fas {{ facility.icon_class }}"></i>
+                </div>
+                <h3>{{ facilityютфьу }}</h3>
+                <p class="dim-text">{{ facility.short_desc }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
