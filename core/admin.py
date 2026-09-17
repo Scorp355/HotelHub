@@ -34,5 +34,4 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'subject', 'is_processed', 'created_at')
     list_filter = ('is_processed', 'created_at')
     search_fields = ('name', 'email', 'subject')
-    readonly_fields = ('name', 'email', 'subject', 'message', 'created_at')
-
+    readonly_fields = ('name', 'email', 'subject', 'message', 'created_at')   
