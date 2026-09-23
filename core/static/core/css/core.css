@@ -1,0 +1,182 @@
+/* Глобальные переменные (могут наследоваться из base.css) */
+:root {
+    --bg-matte: #1a1a1a;
+    --surface-charcoal: #242424;
+    --text-premium: #f5f5f5;
+    --accent: #c5a880;
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --font-heading: 'Manrope', sans-serif;
+    --font-body: 'Inter Tight', sans-serif;
+}
+
+/* Hero секция */
+.hero-section {
+    height: 65vh;
+    background: linear-gradient(rgba(26, 26, 26, 0.5), rgba(26, 26, 26, 0.95)),
+        url('../images/cover.jpeg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    color: var(--text-premium);
+}
+
+.hero-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 1.2rem;
+    color: #a0a0a0;
+    letter-spacing: 0.05em;
+}
+
+/* Дашборд поиска */
+.search-dashboard {
+    background-color: var(--surface-charcoal);
+    padding: 2.5rem;
+    margin: -4rem auto 0;
+    width: 85%;
+    max-width: 1000px;
+    display: flex;
+    gap: 1.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    position: relative;
+    border: 1px solid var(--border-subtle);
+}
+
+.search-dashboard input {
+    flex: 1;
+    background-color: var(--bg-matte);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-premium);
+    padding: 1.2rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-dashboard input:focus {
+    border-color: var(--accent);
+}
+
+.btn-accept {
+    background-color: var(--accent);
+    color: #000;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.1s ease;
+}
+
+.btn-accept:hover {
+    opacity: 0.9;
+}
+
+.btn-accept:active {
+    transform: scale(0.98);
+}
+
+/* Секции контента и Карточки */
+.content-section {
+    padding: 6rem 10%;
+}
+
+.matte-bg {
+    background-color: var(--bg-matte);
+}
+
+.charcoal-bg {
+    background-color: var(--surface-charcoal);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-heading {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 4rem;
+    letter-spacing: -0.02em;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+}
+
+.flex-scroll-layout {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    padding-bottom: 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--surface-charcoal);
+}
+
+.card.premium-card {
+    background-color: var(--surface-charcoal);
+    padding: 3rem 2rem;
+    border: 1px solid var(--border-subtle);
+    transition: transform 0.4 ease, border-color 0.4s ease;
+}
+
+.card.premium-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.matte-bg .card.premium-card {
+    background-color: var(--bg-matte);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.accept-text {
+    color: var(--accent);
+}
+
+.dim-text {
+    color: #a0a0a0;
+    font-weight: 300;
+    line-height: 1.7;
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+.icon-wrapper {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+}
+
+.badge {
+    display: inline-block;
+    background-color: var(--accent);
+    color: #000;
+    padding: 0.3rem 0.8rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-top: 1.5rem;
+}
