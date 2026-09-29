@@ -6,8 +6,21 @@ from django.db.models import Q
 from rooms.models import Room
 from .models import Booking
 
+from django.db import transaction
+
 
 ACTIVE_STATUSES = ('pending', 'confirmed')
+
+def create_safe_booking(user, room, check_in, check_out):
+    # 1. Открываем транзакцию
+    with transaction.atomic():
+        # 2. Ищем пересечение дат (чужой выезд -> наш заезд) и наоборот
+        overlapping = Booking.objects.select_for_update().filter(room=room,
+                                                                  check_in__lt=check_out, check_out__gt=check_in ).exists()
+        if overlapping:
+            raise ValidationError('Извините, эти даты только что были забронированы')
+        booking = Booking.objects.create(user=user, room=room, check_in=check_in, check_out=check_out)
+        return booking
 
 
 def calculate_nights(check_in: date, check_out: date):

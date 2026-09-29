@@ -1,7 +1,7 @@
 {% load static %}
 <header class="navbar">
     <div class="container">
-        <a href="{% url 'hotel_list' %}" class="logo">HotelHub</a>
+        <a href="{% url 'core:home' %}" class="logo">HotelHub</a>
         <nav class="nav">
             <a href="{% url 'hotel_list' %}"
                 class="{% if request.resolver_match.url_name == 'hotel_list' %}active{% endif %}">Отели</a>
