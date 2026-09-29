@@ -16,7 +16,7 @@
 </section>
 
 {# Дашборд поиска (связь с модулем rooms) #}
-<form class="search-dashboard" action="{% url 'rooms:list' %}" method="get">
+<form class="search-dashboard" action="{% url 'rooms:rooms_list' %}" method="get">
     <input type="date" name="check_in" required title="Дата заезда" placeholder="Заезд">
     <input type="date" name="check_out" required title="Дата выезда" placeholder="Выезд">
     <button type="submit" class="btn-accent">Найти номер</button>
@@ -45,7 +45,7 @@
         {% for promo in promos %}
         <div class="card premium-card border-accept">
             <h3 class="accept-text">{{ promo.title }}</h3>
-            <p class="dim-text">{{ promo-description }}</p>
+            <p class="dim-text">{{ promo_description }}</p>
             {% if promo.discount_percent %}
             <div class="badge">- {{ promo.diccount_percent }}%</div>
             {% endif %}

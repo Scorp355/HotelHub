@@ -6,6 +6,6 @@ app_name = 'rooms'
 
 
 urlpatterns = [
-    path('', views.rooms_list, name='room_list'),
+    path('', views.rooms_list, name='rooms_list'),
     path('<int:pk>/', views.room_detail, name='room-detail')
 ]
