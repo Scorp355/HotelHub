@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="search-section matte-bg">
+    <form action="" method="GET" class="filter-form flex-layout">
+        <div class="input-group">
+            <label for="">Заезд</label>
+            {{ form.check_in }}
+        </div>
+
+        <div class="input-group">
+            <label for="">Выезд</label>
+            {{ form.check_out }}
+        </div>
+
+        <div class="input-group">
+            <label for="">Сортировка</label>
+            {{ form.sort_by }}
+        </div>
+        <button type="submit" class="btn-accent">Применить</button>
+    </form>
+</section>
+
+<section class="catalog-section">
+    <div class="grid-layout">
+        {% for room in rooms %}
+        <div class="card room-card charcoal-bg">
+            <img src="{{ room.image.url }}" alt="{{ room.title }}">
+            <h3>{{ room.title }}</h3>
+            <p class="price accent-text">от {{ room.price }} ег / ночь</p>
+            <a href="{% url 'rooms:room_detail' room.id %}" class="btn-outline">Подробнее</a>
+        </div>
+
+        <div class="empty-state">
+            <h3>Нет свободных номеров</h3>
+            <p>Попробуйте изменить даты или параметры фильтрации</p>
+        </div>
+        {% endfor %}        
+    </div>
+    {% if is_paginated %}
+    <div class="pagination flex-center">
+        {% if page_obj.has_previos %}
+        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}$laquo; Назад"></a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
