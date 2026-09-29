@@ -54,7 +54,7 @@ def create_booking(user, room: Room, check_in: date, check_out:date, guests: int
                                   guests=guests, status='pending')
 
 
-def cansel_booking(booking: Booking) -> Booking:
+def cancel_booking(booking: Booking) -> Booking:
     """Отменяет бронирование"""
     if booking.status == 'cancelled':
         raise ValidationError('Эта бронь уже отменена')

@@ -43,11 +43,11 @@ def booking_create(request, room_id):
 
 
 @login_required
-def booking_cansel(request, pk):
+def booking_cancel(request, pk):
     booking = get_object_or_404(Booking, pk=pk, user=request.user)
 
     try:
-        services.cansel_booking(booking)
+        services.cancel_booking(booking)
         messages.info(request, f'Бронь {booking.pk} отменена')
     except ValidationError as exc:
         messages.error(request, exc.messages[0])

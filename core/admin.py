@@ -26,7 +26,7 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(FAQItem)
 class FAQItemAdmin(admin.ModelAdmin):
     list_display = ('question', 'order')
-    list_editable = ('order')
+    list_editable = ('order',)
 
 
 @admin.register(ContactMessage)
