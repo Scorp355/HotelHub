@@ -1,6 +1,41 @@
 from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView
 from .models import Room
-from .forms import RoomTypesFiter
+from bookings.models import Booking
+from .forms import RoomTypesFiter, RoomSearchForm
+
+
+class RoomListView(ListView):
+    model = Room
+    template_name = 'rooms/catalog.html'
+    context_object_name = 'rooms'
+
+    paginate_by = 6     # Максимум 6 номеров на одной странице
+    
+    def get_queryset(self):
+        queryset = Room.objects.filter(is_active=True)
+        form = RoomSearchForm(self.request.GET)
+        if form.is_valid():
+            check_in = form.cleaned_data.get('check_in')
+            check_out = form.cleaned_data.get('check_out')
+            sort_by = form.cleaned_data.get('sort_by')
+            # Поиск свободных номеров
+            if check_in and check_out:
+                busy_rooms_ids = Booking.objects.filter(
+                        check_in__lt=check_out,
+                        check_out__gt=check_in
+                    ).values_list('room_id', flat=True)
+                queryset = queryset.exclude(id__in=busy_rooms_ids)
+            if sort_by:
+                queryset = queryset.order_by(sort_by)
+            else:
+                queryset = queryset.order_by('price')
+        return queryset    
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = RoomSearchForm(self.request.GET)
+        return context
 
 
 # Обрабатывает запрос пользователя и возвращает страницу со списком номеров
