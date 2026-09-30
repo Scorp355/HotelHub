@@ -146,7 +146,7 @@ a:hover {
 
 /* Кнопки */
 .btn,
-.search_btn {
+.search-btn {
     display: inline-block;
     padding: 12px 24px;
     background: var(--theme-accent);
