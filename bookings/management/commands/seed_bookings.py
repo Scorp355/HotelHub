@@ -50,7 +50,7 @@ class Command(BaseCommand):
             check_in = today + timedelta(days=start_offset)
             check_out = check_in + timedelta(days=nights)
             try:
-                booking = services.create_booking(room=room, check_in=check_in, check_out=check_out,
+                booking = services.create_booking(user=guest ,room=room, check_in=check_in, check_out=check_out,
                                                   guests=min(guests, room.capacity))
                 say(f'  + Бронь №{booking.pk}: {room}'
                 f'({check_in} - {check_out}, {booking.nights} ноч.)'

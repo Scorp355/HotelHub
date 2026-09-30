@@ -3,7 +3,7 @@
     <div class="container">
         <a href="{% url 'core:home' %}" class="logo">HotelHub</a>
         <nav class="nav">
-            <a href="{% url 'hotel_list' %}"
+            <a href="{% url 'hotels:hotel_list' %}"
                 class="{% if request.resolver_match.url_name == 'hotel_list' %}active{% endif %}">Отели</a>
             <a href="{% url 'rooms:rooms_list' %}"
                 class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Номера</a>

@@ -15,7 +15,7 @@ def hotel_list(request):
     #     hotels = [h for h in hotels if city.lower() in h.city.lower()]
     
     if city:
-        hotels = hotels.filter(city_icintains=city)
+        hotels = hotels.filter(city__icontains=city)
 
     return render(request, 'hotels/list.html', {
         'hotels': hotels,   # список найденных отелей
@@ -33,7 +33,7 @@ def hotel_detail(request, pk):
         )
     # получаем свободные номера выбранного отеля
     rooms = hotel.rooms.filter(is_available=True)
-    return render(request, 'hotel_detail.html', {
+    return render(request, 'hotels/hotel_detail.html', {
         'hotel': hotel, 'rooms': rooms
         })
     

@@ -25,7 +25,7 @@ class RoomSearchForm(forms.Form):
     check_out = forms.DateField(required=False, widget=forms.DateInput(
             {'type': 'date'}
         ))
-    sort_by = forms.DateField(choices=[
+    sort_by = forms.ChoiceField(choices=[
             ('price', 'Сначала дешевле'),
             ('-price', 'Сначала дороже')
         ], required=False)

@@ -25,11 +25,11 @@
 {% block content %}
 <div class="detail">
     <div class="detail-meta">
-        <span class="price">{{ hoyel.price|incomma }} ₸/ночь</span>
-        <span class="rating">★{{ hotel.rating\floatformat:1 }}</span>
+        <span class="price">{{ hoyel.price|intcomma }} ₸/ночь</span>
+        <span class="rating">★{{ hotel.rating|floatformat:1 }}</span>
     </div>
-    {% if {{hotel.description}} %}
-        <p class="detail-desc">{{ hotel.description }}</p>
+    {% if hotel.description %}
+    <p class="detail-desc">{{ hotel.description }}</p>
     {% endif %}
 
     <h2 class="detail-heading">
@@ -39,7 +39,7 @@
     {% if rooms %}
     <div>
         {% for room in rooms %}
-            {% include 'rooms/_card.html' %}
+        {% include 'rooms/_card.html' %}
         {% endfor %}
     </div>
     {% else %}
@@ -47,4 +47,4 @@
     {% endif %}
     <p class="back-link"><a href="{% url 'hotels:hotel_list' %}">← Ко всем отелям</a></p>
 </div>
-{% endclock %}
+{% endblock %}
