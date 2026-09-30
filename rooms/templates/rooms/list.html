@@ -17,8 +17,9 @@
 
 {% block content %}
 <form method="get" class="search-form">
-    <p class="room_search">Тип номера: </p>
-    <div class="search-container">
+
+    <div class="search-form">
+        <p class="room_search">Тип номера: </p>
         {{ form.room }}
         <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
             placeholder="Введите название отеля...">

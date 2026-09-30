@@ -2,11 +2,9 @@
 {% load static %}
 {% load humanize %}
 
-
 {% block title %}
 {{hotel.name}} - HotelHub
 {% endblock %}
-
 
 {% block body_class %}theme-hotels{% endblock %}
 
@@ -16,16 +14,15 @@
 {% endblock %}
 
 
-{% block header %}
+{% block page_header %}
 <h1>{{ hotel.name }}</h1>
 <p>{{ hotel.city }}, {{ hotel.address }}</p>
 {% endblock %}
 
-
 {% block content %}
-<div class="detail">
+<div class="container">
     <div class="detail-meta">
-        <span class="price">{{ hoyel.price|intcomma }} ₸/ночь</span>
+        <span class="price">{{ hotel.price_night|intcomma }} ₸/ночь</span>
         <span class="rating">★{{ hotel.rating|floatformat:1 }}</span>
     </div>
     {% if hotel.description %}

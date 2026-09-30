@@ -127,6 +127,7 @@ a:hover {
     display: flex;
     gap: 12px;
     margin-bottom: 28px;
+    margin-top: 24px;
 }
 
 .search-input {
@@ -137,6 +138,10 @@ a:hover {
     font-size: 15px;
     background: var(--color-surface);
     color: var(--color-text);
+}
+
+.search-select {
+    border-radius: 8px;
 }
 
 .search-input:focus {
@@ -165,6 +170,10 @@ a:hover {
     text-decoration: none;
 }
 
+.room_search {
+    font-size: 18px;
+}
+
 /* Сетка карточек */
 .card-grid {
     display: grid;
@@ -191,6 +200,15 @@ a:hover {
     align-items: center;
     gap: 8px;
     margin-bottom: 4px;
+}
+
+.hotel-card {
+    padding: 16px;
+}
+
+.room-card {
+    padding: 24px;
+    margin: 12px 0;
 }
 
 .card-title {
