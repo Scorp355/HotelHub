@@ -45,5 +45,10 @@ class Command(BaseCommand):
                 )
                 if created:
                     created_count += 1
+
+                if hotel.name == 'Grand Astana' and rtype == 'single' and not room.image:
+                    room.image.name = 'rooms/images/demo/single-room.jpg'
+                    room.save(update_fields=['image'])
+
         say(self.style.SUCCESS(f'Готово. Создано новых: {created_count}. Всего номеров {Room.objects.count()}'))
                 
