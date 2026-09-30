@@ -40,6 +40,5 @@ class Hotel(models.Model):
                                        name='hotel_rating_between_0_and_5'),                
             ]
 
-
     def __str__(self):
         return self.name
