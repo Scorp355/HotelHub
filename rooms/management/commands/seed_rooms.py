@@ -32,7 +32,7 @@ class Command(BaseCommand):
         for hotel_index, hotel in enumerate(hotels, start=1):
             for i, rtype in enumerate(ROOM_TYPES, start=1):
                 number = f'{i}0{hotel_index}'
-                created = Room.objects.get_or_create(
+                room, created = Room.objects.get_or_create(
                     hotel=hotel,
                     number=number,
                     defaults = {
