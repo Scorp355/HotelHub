@@ -67,7 +67,7 @@
                             <br>
                             {# Даты проживания, кол-во ночей и общая стоимость бронирования #}
                             <small>
-                                {{ booking.check_in|date:"d.m.Y" }} — {{ booking.check-out|date:"d.m.Y" }}
+                                {{ booking.check_in|date:"d.m.Y" }} — {{ booking.check_out|date:"d.m.Y" }}
                                 • {{ booking.night }} ноч.
                                 • {{ booking.total_orice|intcomma }} ₸
                             </small>                            
@@ -83,7 +83,7 @@
             {# Если бронирований нет, то показываем сообщение и ссылку на страницу с выбором номера #}
             <p class="empty">
                 У вас пока нет бронирований.
-                <a href="{% url 'rooms:room_list' %}">Выбрать номер</a>
+                <a href="{% url 'rooms:rooms_list' %}">Выбрать номер</a>
             </p>
         {% endif %}
     </section>

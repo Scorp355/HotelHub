@@ -17,9 +17,9 @@
 
 {# Дашборд поиска (связь с модулем rooms) #}
 <form class="search-dashboard" action="{% url 'rooms:rooms_list' %}" method="get">
-    <input type="date" name="check_in" required title="Дата заезда" placeholder="Заезд">
-    <input type="date" name="check_out" required title="Дата выезда" placeholder="Выезд">
-    <button type="submit" class="btn-accent">Найти номер</button>
+    <input type="date" name="check_in" required title="Дата заезда" placeholder="Заезд" class="input">
+    <input type="date" name="check_out" required title="Дата выезда" placeholder="Выезд" class="input">
+    <button type="submit" class="btn-accept">Найти номер</button>
 </form>
 
 {# Инфраструктура #}

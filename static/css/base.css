@@ -59,7 +59,7 @@ a:hover {
 }
 
 .container {
-    margin: 0 auto;
+    margin: 24px auto 0 auto;
     max-width: var(--container-width);
     padding: 0 24px;
 }
@@ -127,7 +127,7 @@ a:hover {
     display: flex;
     gap: 12px;
     margin-bottom: 28px;
-    margin-top: 24px;
+    /* margin-top: 24px; */
 }
 
 .search-input {
