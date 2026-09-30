@@ -8,8 +8,9 @@
             <a href="{% url 'rooms:rooms_list' %}"
                 class="{% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Номера</a>
             <a href="/admin/">Админка</a>
+            {# Временные ссылки #}
             <a href="{% url 'users:profile' %}">Профиль</a>
-            <a href="{% url 'users:logout' %}">Выйти</a>
+            <a href="{% url 'users:logout' %}">Выйти</a>            
         </nav>
     </div>
 </header>

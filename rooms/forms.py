@@ -15,7 +15,7 @@ class RoomTypesFiter(forms.Form):
             'class': 'search-select custom-dropdown', # Ваши CSS-классы
         })
     )
-
+    
 
 class RoomSearchForm(forms.Form):
     # Поле для даты заезда

@@ -17,25 +17,52 @@
 
 {% block content %}
 <form method="get" class="search-form">
-
-    <div class="search-form">
-        <p class="room_search">Тип номера: </p>
-        {{ form.room }}
-        <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
-            placeholder="Введите название отеля...">
-        <button type="submit" class="search-btn">Найти</button>
-    </div>
+   
+    <p class="room_search">Тип номера: </p>
+    {{ form.room }}
+    <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
+        placeholder="Введите название отеля...">    <div class="input-group">
+        <label for="{{ form.check_in.id_for_label }}">{{ form.check_in.label }}</label>
+        {{ form.check_in }}            
+    </div>    <div class="input-group">
+        <label for="{{ form.check_out.id_for_label }}">{{ form.check_out.label }}</label>
+        {{ form.check_out }}
+    </div>    <div class="input-group">
+        <label for="{{ form.sort_by.id_for_label }}">{{ form.sort_by.label }}</label>
+        {{ form.sort_by }}
+    </div>    
+    <button type="submit" class="search-btn">Найти</button>    
 </form>
 
+{% for error in form.non_field_errors %}
+    <p class="form-error">{{ error }}</p>
+{% endfor %}
+
 {% if rooms %}
-<div class="rooms-grid">
-    {% for room in rooms %}
-    {% include 'rooms/_card.html' %}
-    {% endfor %}
-</div>
+    <div class="card-grid">
+        {% for room in rooms %}
+        {% include 'rooms/_card.html' %}
+        {% endfor %}
+    </div>  
+
+    {% if is_paginated %}
+        <div class="pagination flex-center">
+            {% if page_obj.has_previos %}
+                <a href="{% querystring page=page_obj.previos_page_number %}">Назад</a>
+            {% endif %}            
+            
+            <span class="current-page">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="{% querystring page=page_obj.next_page_number %}">Вперед</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
 {% else %}
-<div class="empty">
-    <p class="empty">Номера отелей не найдены, попробуйте изменить свой поисковый запрос.</p>
-</div>
+    <div class="empty">
+        <p class="empty">Номера отелей не найдены, попробуйте изменить свой поисковый запрос.</p>
+    </div>
 {% endif %}
 {% endblock %}
