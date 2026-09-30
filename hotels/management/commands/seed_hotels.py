@@ -11,6 +11,11 @@ HOTELS = [
         ('Karaganda Central', 'Караганда', 'пр. Бахар жырау, 40', 24000, 4.0, 'Классический городской отель в деловом центре Караганды'),
     ]
 
+DEMO_COVERS = {
+        'Grand Astana': 'hotels/covers/demo/grand-astana.jpg',
+        'Almaty Plaza': 'hotels/covers/demo/almaty-plaza.jpg',
+    }
+
 
 class Command(BaseCommand):
     help = 'Создает демонстрациолнные отели'
@@ -36,5 +41,11 @@ class Command(BaseCommand):
             if created:
                 created_count += 1
                 say(f'  +{name} ({city})')
+
+            demo_path = DEMO_COVERS.get(name)
+            if demo_path and not hotel.cover:
+                hotel.cover.name = demo_path
+                hotel.save(update_fields=['cover'])
+        
         say(self.style.SUCCESS(f'Готово. Создано новых: {created_count}. Всего отелей: {Hotel.objects.count()}'))
 

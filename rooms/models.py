@@ -44,8 +44,9 @@ class Room(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     image = models.ImageField('Фото номера', upload_to=room_image_path, blank=True, null=True,
-                              validators=[FileExtensionValidator(ALLOVED_IMAGE_EXTENSIONS)],
-                              help_text='JPG/PNG/WEBP, не более 5 МБ')
+                              validators=[FileExtensionValidator(ALLOVED_IMAGE_EXTENSIONS),
+                                          validate_images_size],
+                              help_text='JPG/PNG/WEBP, не более 5 МБ',)
 
     objects = RoomQuerySet.as_manager()
 
@@ -55,7 +56,7 @@ class Room(models.Model):
         verbose_name_plural = 'Номера' # в множественном числе
         ordering = ['-created_at']  # сортировка по дате создания записи
         constraints = [models.UniqueConstraint(fields=['hotel', 'number'], name='room_unique_number_hotel')]
-        indexes = [models.Index(fields=['is_available', 'room_type'], name='room_is_available_room_type_idx')]
+        indexes = [models.Index(fields=['is_available', 'room_type'], name='room_available_type_idx')]
 
     def __str__(self):
         return f'{self.hotel.name} — номер {self.number}'
