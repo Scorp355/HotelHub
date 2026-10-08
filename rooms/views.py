@@ -13,7 +13,7 @@ SORT_FIELDS = {
 
 class RoomListView(ListView):
     model = Room
-    template_name = 'rooms/catalog.html'
+    template_name = 'rooms/list.html'
     context_object_name = 'rooms'
     paginate_by = 6     # Максимум 6 номеров на одной странице
     
@@ -45,7 +45,7 @@ class RoomListView(ListView):
             if sort_by:
                 queryset = queryset.order_by(sort_by)
             else:
-                queryset = queryset.order_by('price')
+                queryset = queryset.order_by('price_night')
         return queryset    
     
     def get_context_data(self, **kwargs):
