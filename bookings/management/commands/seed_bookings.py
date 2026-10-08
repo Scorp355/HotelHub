@@ -57,4 +57,5 @@ class Command(BaseCommand):
                 )
             except ValidationError as exc:
                 say(self.style.WARNING(f'   ! Пропущено: {exc.messages[0]}'))
+                
         say(self.style.SUCCESS(f'Готово: Всего бронирований в системе {Booking.objects.count()}'))

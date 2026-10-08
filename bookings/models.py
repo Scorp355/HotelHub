@@ -21,7 +21,7 @@ class Booking(models.Model):
     # Количество гостей
     guests = models.PositiveIntegerField('Количество гостей', default=1)
     # Статус бронирования
-    status = models.CharField('Статус', max_length=30, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='pending')
     # Дата создания
     created_at = models.DateTimeField('Создано', auto_now_add=True)
 
@@ -31,7 +31,10 @@ class Booking(models.Model):
         verbose_name_plural = 'Бронирования'
         ordering = ['-created_at']
         constraints = [
-            models.CheckConstraint(condition=models.Q(check_out__gt=models.F('check_in')), name='booking_checkout_after_checkin'),            
+            models.CheckConstraint(condition=models.Q(check_out__gt=models.F('check_in')),
+                                   name='booking_checkout_after_checkin'),
+            # Число гостей не может быть нулевым
+            models.CheckConstraint(condition=models.Q(guests__gte=1), name='booking_guests_positive')
             ]
         indexes = [
             models.Index(fields=['user', '-created_at'], name='booking_user_created_at-idx'),       # Составной индекс

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load humanize %}
-{% load static %}
 
 {% block title %}Бронирование - HotelHub{% endblock %}
 
@@ -10,8 +9,8 @@
 {% block content %}
 <div class="form-card">
     <div class="booking-summary">
-        <b>{{ room.get_room_type_display }}</b> в отеле «{{ room.hotel.name }}»
-        <span class="price">{{ room.price_night|intcomma }} ₸ / ночь</span> • до {{ room.capacity }} гостей        
+        <b>{{ room.get_room_type_display }}</b> в отеле «{{ room.hotel.name }}»<br>
+        <span class="price">{{ room.price_night|intcomma }} ₸ / ночь</span> • до {{ room.capacity }} гостей
     </div>
 
     <form method="post" novalidate>
@@ -30,11 +29,11 @@
             <label for="{{ form.guests.id_for_label }}">Число гостей</label>
             {{ form.guests }}
         </div>
-        
+
         {% for error in form.non_field_errors %}
-            <p class="form-error">{{ error }}</p>
+        <p class="form-error">{{ error }}</p>
         {% endfor %}
-        
+
         <button type="submit" class="btn">Забронировать</button>
     </form>
 </div>

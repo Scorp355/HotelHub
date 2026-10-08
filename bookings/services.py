@@ -55,14 +55,21 @@ def is_room_available(room: Room, check_in: date, check_out: date,
     return not overlapping.exists()
 
 
+@transaction.atomic
 def create_booking(user, room: Room, check_in: date, check_out:date, guests: int = 1) -> Booking:
+    room = Room.objects.select_for_update().get(pk=room.pk)
+
     validate_booking_dates(check_in, check_out)
+
     if guests < 1:
         raise ValidationError('Число гостей не должно быть меньше одного')
+    
     if guests > room.capacity:
         raise ValidationError(f'Номер вмещает не более {room.capacity} гост(я/ей)')
+    
     if not is_room_available(room, check_in, check_out):
         raise ValidationError('Номер уже забронирован на выбранные даты')
+    
     return Booking.objects.create(user=user, room=room, check_in=check_in, check_out=check_out,
                                   guests=guests, status='pending')
 
