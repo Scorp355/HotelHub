@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 
-
 ALLOVED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp']
 
 def validate_images_size(file, max_mb: int = 5) -> None:

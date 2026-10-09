@@ -1,72 +1,58 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'core/css/core.css' %}">
+{% load humanize %}
+
+{% block title %}HotelHub - поиск и бронироание отелей{% endblock %}
+
+{% block page_header %}
+<section class="hero">
+    <div class="container">
+        <h1>Найдите идеальный отель</h1>
+        <p>Тысячи номеров в отелях по всему Казахстану — поиск, сравнение и бронирование в пару кликов.</p>
+        <div class="hero-actions">
+            <a href="{% url 'hotels:hotel_list' %}" class="btn">Смотреть отели</a>
+            <a href="{% url 'rooms:rooms_list' %}">Выбрать номер</a>
+        </div>
+    </div>
+</section>
 {% endblock %}
 
-
 {% block content %}
-<section class="hero-section">
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Искусство отдыха</h1>
-            <p class="hero-subtitle">Премиальный комфорт в каждой детали</p>
-        </div>
+{# Блок статистики #}
+<div class="stats">
+    <div class="stat"><b>{{ stats.hotels }}</b><span>отелей</span></div>
+    <div class="stat"><b>{{ stats.rooms }}</b><span>свобоных номеров</span></div>
+    <div class="stat"><b>{{ stats.cities }}</b><span>городов</span></div>
+</div>
+
+<section class="home-section">
+    <div class="section-head">
+        <h2>Популярные отели</h2>
+        <a href="{% url 'hotels:hotel_list' %}">Все отели →</a>
     </div>
-</section>
-
-{# Дашборд поиска (связь с модулем rooms) #}
-<form class="search-dashboard" action="{% url 'rooms:rooms_list' %}" method="get">
-    <input type="date" name="check_in" required title="Дата заезда" placeholder="Заезд" class="input">
-    <input type="date" name="check_out" required title="Дата выезда" placeholder="Выезд" class="input">
-    <button type="submit" class="btn-accept">Найти номер</button>
-</form>
-
-{# Инфраструктура #}
-<section class="content-section">
-    <h2 class="section-heading">Инфраструктура</h2>
-    <div class="grid-layout facilities-grid">
-        {% for facility in facilities %}
-        <div class="card premium-card text-center">
-            <div class="icon-wrapper">
-                <i class="fas {{ facility.icon_class }}"></i>
-            </div>
-            <h3>{{ facilityютфьу }}</h3>
-            <p class="dim-text">{{ facility.short_desc }}</p>
-        </div>
+    {% if top_hotels %}
+    <div class="card_grid">
+        {% for hotel in top_hotels %}
+        {% include "hotels/_card.html" with hotel=hotel %}
         {% endfor %}
     </div>
+    {% else %}
+    <p class="empty">Отели пока не добавлены</p>
+    {% endif %}
 </section>
 
-{# Спецпредложения #}
-<section class="content-section charcoal-bg">
-    <h2 class="section-heading">Привилегии</h2>
-    <div class="grid-layout promos-grid">
-        {% for promo in promos %}
-        <div class="card premium-card border-accept">
-            <h3 class="accept-text">{{ promo.title }}</h3>
-            <p class="dim-text">{{ promo_description }}</p>
-            {% if promo.discount_percent %}
-            <div class="badge">- {{ promo.diccount_percent }}%</div>
-            {% endif %}
-        </div>
-        {% empty %}
-        <p class="dim-text">В данный момент активных предложений нет</p>
+<section class="home-section">
+    <div class="section-head">
+        <h2>Свободные номера</h2>
+        <a href="{% url 'rooms:rooms_list' %}">Все номера →</a>
+    </div>
+    {% if featured_rooms %}
+    <div class="card-grid">
+        {% for room in featured_rooms %}
+        {% include 'rooms/_card.html' %}
         {% endfor %}
     </div>
-</section>
-
-{# Отзывы гостей #}
-<section class="content-section matte-bg">
-    <h2 class="section-heading">Отзывы гостей</h2>
-    <div class="flex-scroll-layout reviews-container">
-        {% for review in reviews %}
-        <div class="card premium-card review-card">
-            <div class="rating accept-text">★{{ review.ratting }}/5</div>
-            <p class="italic-text dim-text">{{ review.text }}</p>
-            <h4 class="author-name">{{ review.author }}</h4>
-        </div>
-        {% endfor %}
-    </div>
+    {% else %}
+    <p class="empty">Номера пока не добавлены</p>
+    {% endif %}
 </section>
 {% endblock %}
