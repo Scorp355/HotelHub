@@ -5,7 +5,7 @@ from hotels.models import Hotel
 
 
 @receiver(post_delete, sender=Hotel)
-def delete_cover(sender, instance, **kwargs):
+def delete_cover_file_on_hotel_delete(sender, instance, **kwargs):
+    """При удалении отеля удаляем его файл обложки, если он был."""
     if instance.cover:
         instance.cover.delete(save=False)
-        

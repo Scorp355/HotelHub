@@ -1,6 +1,17 @@
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
-from core.validators import ALLOVED_IMAGE_EXTENSIONS, validate_images_size
 from django.db import models
+from django.db.models import Count, Min
+
+from core.validators import ALLOVED_IMAGE_EXTENSIONS, validate_images_size
+
+
+class HotelQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
+    def with_stats(self):
+        return self.annotate(min_price=Min('rooms__price_night'), rooms_count=Count('rooms', distinct=True))
+
 
 def hotel_cover_path(instance, filename):
     return f'hotels/covers/{instance.pk or "new"}/{filename}'
@@ -24,6 +35,8 @@ class Hotel(models.Model):
                               validators=[FileExtensionValidator(ALLOVED_IMAGE_EXTENSIONS),
                                           validate_images_size,],
                                 help_text='JPG/PNG/WEBP, не более 5 МБ.' )    
+
+    objects = HotelQuerySet.as_manager()
     
     class Meta:
         # Название модели в единственном числе

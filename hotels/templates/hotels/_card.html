@@ -1,37 +1,32 @@
 {% load humanize %}
-{# Карточка отеля - клиабельная - ведет на страницу отеля#}
-
-
+{% load static %}
+{# Карточка отеля. Кликабельна — ведёт на страницу отеля с его номерами. #}
 <article class="card hotel-card">
+    <div class="card-image">
+        {% if hotel.cover %}
+        <img src="{{ hotel.cover.url }}" alt="{{ hotel.name }}" loading="lazy"
+            onerror="this.onerror=null;this.src='{% static 'img/no-photo.svg' %}';">
+        {% else %}
+        {# Пока обложка не загружена — показываем заглушку, а не битую картинку. #}
+        <img src="{% static 'img/no-photo.svg' %}" alt="Фото пока нет" loading="lazy">
+        {% endif %}
+    </div>
+
     <h2 class="card-title">
         <a href="{% url 'hotels:hotel_detail' hotel.id %}">{{ hotel.name }}</a>
     </h2>
-    <p class="card-subtitle">{{hotel.city }}, {{ hotel.address }}</p>
+    <p class="card-subtitle">{{ hotel.city }}, {{ hotel.address }}</p>
 
     {% if hotel.description %}
-    <p class="card-desc">{{ hotel.description|truncatechars:120 }}</p>
+    <p class="card-desc">{{ hotel.description }}</p>
     {% endif %}
 
     <div class="card-meta">
-        <span class="price">${{ hotel.price_night }} ₸/ночь</span>
-        <span class="rating">★ {{ hotel.rating }}</span>
+        {% if hotel.min_price %}
+        <span class="price">от {{ hotel.min_price|intcomma }} ₸ / ночь</span>
+        {% else %}
+        <span class="price">{{ hotel.price|intcomma }} ₸ / ночь</span>
+        {% endif %}
+        <span class="rating">★ {{ hotel.rating|floatformat:1 }}</span>
     </div>
 </article>
-
-
-
-<!-- <article class="card hotel-card">
-
-        <h2 class="hotel-name">{{ hotel.name }}</h2>
-        <p class="hotel-city">{{ hotel.city }}, {{ hotel.address }}</p>
-
-        {% if hotel.description %}
-        <p class="hotel-desc">{{ hotel.description|truncatechars:120 }}</p>
-        {% endif %}
-
-        <div class="hotel-meta">
-            <span class="hotel-price">${{ hotel.price_night }} ₸/ночь</span>
-            <span class="hotel-rating">★ {{ hotel.rating }}</span>
-        </div>
-
-    </article> -->

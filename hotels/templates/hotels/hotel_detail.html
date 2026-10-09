@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load humanize %}
+{% load static %}
 
-{% block title %}
-{{hotel.name}} - HotelHub
-{% endblock %}
+{% block title %}{{hotel.name}} - HotelHub{% endblock %}
 
 {% block body_class %}theme-hotels{% endblock %}
 
@@ -14,34 +12,45 @@
 {% endblock %}
 
 
-{% block page_header %}
-<h1>{{ hotel.name }}</h1>
-<p>{{ hotel.city }}, {{ hotel.address }}</p>
-{% endblock %}
+{% block page_title %}{{ hotel.name }}{% endblock %}
+{% block page_subtitle %}{{ hotel.city }}, {{hotel.address}}{% endblock %}
+
 
 {% block content %}
-<div class="container">
-    <div class="detail-meta">
-        <span class="price">{{ hotel.price_night|intcomma }} ₸/ночь</span>
-        <span class="rating">★{{ hotel.rating|floatformat:1 }}</span>
+<div class="detail">
+    <div class="card-image detail-image">
+        {% if hotel.cover %}
+        <img src="{{ hotel.cover.url }}" alt="{{ hotel.name }}"
+            onerror="this.onerror=null;this.src='{% static 'img/no-photo.svg' %}';">
+        {% else %}
+        <img src="{% static 'img/no-photo.svg' %}" alt="Фото пока нет">
+        {% endif %}
     </div>
+
+    <div class="detail-meta">
+        {% if hotel.min_price %}
+        <span class="price">от {{ hotel.min_price|intcomma }} ₸ / ночь</span>
+        {% else %}
+        <span class="price">{{ hotel.price|intcomma }} ₸ / ночь</span>
+        {% endif %}
+        <span class="rating">★ {{ hotel.rating|floatformat:1 }}</span>
+    </div>
+
     {% if hotel.description %}
     <p class="detail-desc">{{ hotel.description }}</p>
     {% endif %}
 
-    <h2 class="detail-heading">
-        Номера этого отеля
-    </h2>
-
+    <h2 class="detail-heading">Номера этого отеля</h2>
     {% if rooms %}
-    <div>
+    <div class="card-grid">
         {% for room in rooms %}
-        {% include 'rooms/_card.html' %}
+        {% include "rooms/_card.html" with room=room %}
         {% endfor %}
     </div>
     {% else %}
-    <p class="empty">Свободных номеров сейчас нет</p>
+    <p class="empty">Свободных номеров сейчас нет.</p>
     {% endif %}
+
     <p class="back-link"><a href="{% url 'hotels:hotel_list' %}">← Ко всем отелям</a></p>
 </div>
 {% endblock %}
