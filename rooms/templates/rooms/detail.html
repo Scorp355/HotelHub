@@ -2,7 +2,6 @@
 {% load humanize %}
 {% load static %}
 
-
 {% block title %}Номер {{ room.number }} - HotelHub{% endblock %}
 
 {% block body_class %}theme-rooms{% endblock %}
@@ -17,13 +16,21 @@
 
 {% block content %}
 <div class="detail">
+    <div class="card-image detail-image">
+        {% if room.image %}
+        <img src="{{ room.image.url }}" alt="Номер {{ room.number }}"
+            onerror="this.onerror=null;this.src='{% static 'img/no-photo.svg' %}';">
+        {% else %}
+        <img src="{% static 'img/no-photo.svg' %}" alt="Фото пока нет">
+        {% endif %}
+    </div>
+
     <div class="card-head">
         <h2 class="detail-heading">{{ room.get_room_type_display }}</h2>
-
-        {% if room.is_available %}
-        <span class="badge badge-success">Свободен</span>
+        {% if room.occupied_today %}
+        <span class="badge badge-danger">Занят сегодня</span>
         {% else %}
-        <span class="badge badge-danger">Занят</span>
+        <span class="badge badge-success">Свободен</span>
         {% endif %}
     </div>
 
@@ -34,19 +41,20 @@
     {% endif %}
 
     <div class="detail-meta">
-        <span class="price">{{ room.price_night|intcomma }} ₸/ночь</span>
+        <span class="price">{{ room.price_per_night|intcomma }} ₸ / ночь</span>
     </div>
 
     {% if room.is_available %}
     {% if user.is_authenticated %}
     <a href="{% url 'bookings:create' room.id %}" class="btn">Забронировать</a>
     {% else %}
+    {# Гостю сначала предлагаем войти, затем вернём к бронированию #}
     <a href="{% url 'users:login' %}?next={% url 'bookings:create' room.id %}" class="btn">
-        Войдите, чтобы забранировать
+        Войдите, чтобы забронировать
     </a>
     {% endif %}
     {% endif %}
 
-    <p class="back-link"><a href="{% url 'rooms:rooms_list' %}">🠔 Ко всем номерам</a></p>
+    <p class="back-link"><a href="{% url 'rooms:room_list' %}">← Ко всем номерам</a></p>
 </div>
 {% endblock %}

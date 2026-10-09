@@ -9,12 +9,35 @@ def room_image_path(instance, filename):
 
 
 class RoomQuerySet(models.QuerySet):
+
+    def on_sale(self):        
+        return self.filter(is_available=True)
+
     def free_between(self, check_in, check_out):
         from bookings.services import ACTIVE_STATUSES
         from bookings.models import Booking
-        busy_room_ids = Booking.objects.filter(status__in=ACTIVE_STATUSES, check_in__lt=check_out,
-                                               check_out__gt=check_in).values_list('room_id', flat=True)
-        return self.exclude(pk__in=busy_room_ids)
+
+        overlapping = Booking.objects.filter(
+            room=models.OuterRef('pk'),
+            status__in=ACTIVE_STATUSES,
+            check_in__lt=check_out,
+            check_out__gt=check_in,
+        )
+        return self.filter(~models.Exists(overlapping))
+
+    def with_today_status(self, as_of=None):        
+        from django.utils import timezone
+        from bookings.services import ACTIVE_STATUSES
+        from bookings.models import Booking
+
+        today = as_of or timezone.localdate()
+        occupied = Booking.objects.filter(
+            room=models.OuterRef('pk'),
+            status__in=ACTIVE_STATUSES,
+            check_in__lte=today,
+            check_out__gt=today,
+        )
+        return self.annotate(occupied_today=models.Exists(occupied))
 
 
 class Room(models.Model):    

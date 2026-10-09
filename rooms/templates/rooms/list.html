@@ -1,27 +1,21 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}HotelHub - Номера{% endblock %}
+{% block title %}HotelHub — номера{% endblock %}
 
 {% block body_class %}theme-rooms{% endblock %}
-
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'rooms/css/style.css' %}">
 {% endblock %}
 
-
-{% block page_title %} Номера {% endblock %}
+{% block page_title %}Номера{% endblock %}
 {% block page_subtitle %}Выбор номеров в отелях HotelHub{% endblock %}
-
 
 {% block content %}
 <form method="get" class="search-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по типу номера или отелю" class="search-input">
 
-    {#<p class="room_search">Тип номера: </p>#}
-    {{ form.room }}
-    <input class="search-input" type="text" name="hotel_name" value="{{ hotel.name }}"
-        placeholder="Введите название отеля...">
     <div class="input-group">
         <label for="{{ form.check_in.id_for_label }}">{{ form.check_in.label }}</label>
         {{ form.check_in }}
@@ -34,7 +28,8 @@
         <label for="{{ form.sort_by.id_for_label }}">{{ form.sort_by.label }}</label>
         {{ form.sort_by }}
     </div>
-    <button type="submit" class="search-btn">Найти</button>
+
+    <button type="submit" class="search-btn">Искать</button>
 </form>
 
 {% for error in form.non_field_errors %}
@@ -44,28 +39,26 @@
 {% if rooms %}
 <div class="card-grid">
     {% for room in rooms %}
-    {% include 'rooms/_card.html' %}
+    {% include "rooms/_card.html" with room=room %}
     {% endfor %}
 </div>
 
 {% if is_paginated %}
 <div class="pagination flex-center">
-    {% if page_obj.has_previos %}
-    <a href="{% querystring page=page_obj.previos_page_number %}">Назад</a>
+    {% if page_obj.has_previous %}
+    <a href="{% querystring page=page_obj.previous_page_number %}">« Назад</a>
     {% endif %}
 
     <span class="current-page">
         Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
     </span>
+
     {% if page_obj.has_next %}
-    <a href="{% querystring page=page_obj.next_page_number %}">Вперед</a>
+    <a href="{% querystring page=page_obj.next_page_number %}">Вперёд »</a>
     {% endif %}
 </div>
 {% endif %}
-
 {% else %}
-<div class="empty">
-    <p class="empty">Номера отелей не найдены, попробуйте изменить свой поисковый запрос.</p>
-</div>
+<p class="empty">Номера не найдены. Попробуйте изменить запрос или даты.</p>
 {% endif %}
 {% endblock %}

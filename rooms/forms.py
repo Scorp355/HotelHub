@@ -1,20 +1,6 @@
 from django import forms
 from django.utils import timezone
 from .models import Room
-
-
-class RoomTypesFiter(forms.Form):
-    ROOM_TYPES = [('', 'Все типы')] + list(Room.ROOM_TYPES)
-    
-    room = forms.ChoiceField(
-        choices=ROOM_TYPES,
-        label='Выбери тип номера',
-        initial='',
-        required=False,
-        widget=forms.Select(attrs={
-            'class': 'search-select custom-dropdown', # Ваши CSS-классы
-        })
-    )
     
 
 class RoomSearchForm(forms.Form):
@@ -37,4 +23,19 @@ class RoomSearchForm(forms.Form):
         if check_in and check_out and check_in >= check_out:
             raise forms.ValidationError('Дата выезда должна быть позже даты заезда.')
         return cleaned_data
+    
+
+# === Отменено в данной редакции ======================
+# class RoomTypesFiter(forms.Form):
+#     ROOM_TYPES = [('', 'Все типы')] + list(Room.ROOM_TYPES)
+    
+#     room = forms.ChoiceField(
+#         choices=ROOM_TYPES,
+#         label='Выбери тип номера',
+#         initial='',
+#         required=False,
+#         widget=forms.Select(attrs={
+#             'class': 'search-select custom-dropdown', # Ваши CSS-классы
+#         })
+#     )
 

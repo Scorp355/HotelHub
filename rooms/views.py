@@ -3,8 +3,7 @@ from django.views.generic import ListView
 from django.db.models import Q
 from django.db.models.functions import Lower
 from .models import Room
-from bookings.models import Booking
-from .forms import RoomTypesFiter, RoomSearchForm
+from .forms import RoomSearchForm
 
 SORT_FIELDS = {
         'price': 'price_night',
@@ -26,8 +25,7 @@ class RoomListView(ListView):
                               if query.lower() in label.lower()]
             queryset = queryset.annotate(hotel_name_lower=Lower('hotel_name').filter(
                     Q(hotel_name_lower__contains=query.lower())
-                    |
-                    Q(room_type__in=matching_types)
+                    | Q(room_type__in=matching_types)
                 ))            
 
         form = RoomSearchForm(self.request.GET)
@@ -35,24 +33,26 @@ class RoomListView(ListView):
             check_in = form.cleaned_data.get('check_in')
             check_out = form.cleaned_data.get('check_out')
             sort_by = form.cleaned_data.get('sort_by')
-            # Поиск свободных номеров
+            # Фильтруем по занятости, только если обе даты заполнены —
+            # частично заполненная форма не должна ломать обычный список.
             if check_in and check_out:
-                busy_rooms_ids = Booking.objects.filter(
-                        check_in__lt=check_out,
-                        check_out__gt=check_in
-                    ).values_list('room_id', flat=True)
-                queryset = queryset.exclude(id__in=busy_rooms_ids)
-            if sort_by:
-                queryset = queryset.order_by(sort_by)
-            else:
-                queryset = queryset.order_by('price_night')
-        return queryset    
+                queryset = queryset.free_between(check_in, check_out)
+
+            if sort_by in SORT_FIELDS:
+                sort_field = SORT_FIELDS[sort_by]
+        return queryset.order_by(sort_field)    
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = RoomSearchForm(self.request.GET)
         context['query'] = self.request.GET.get('q', '')
         return context
+
+
+def room_detail(request, pk):
+    """Страница одного номера с кнопкой бронирования"""
+    room = get_object_or_404(Room.objects.with_today_status(), pk=pk)
+    return render(request, 'rooms/detail.html', {'room': room})
 
 
 # Обрабатывает запрос пользователя и возвращает страницу со списком номеров
@@ -74,13 +74,6 @@ class RoomListView(ListView):
 #         'rooms': rooms,
 #         'form': form
 #     })
-
-
-def room_detail(request, pk):
-    """Страница одного номера с кнопкой бронирования"""
-    room = get_object_or_404(Room, pk=pk)
-    return render(request, 'rooms/detail.html', {'room': room})
-
 
 
 
