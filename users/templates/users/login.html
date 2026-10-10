@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %} Вход - HotelHub{% endblock %}
 
 {% block page_title%}Вход{% endblock %}
@@ -7,20 +6,24 @@
 
 {% block content %}
 <div class="form-card">
-    <form action="" method="post" novalidate>
+    <form method="post" novalidate>
         {% csrf_token %}
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
         {% for field in form %}
-            <div class="form-row">
-                <label for="{{ field.id_forlabel }}">{{ field.label }}</label>
-                {{ field }}
-                {% for error in field.errors %}
-                    <small class="form-error">{{ error }}</small>
-                {% endfor %}            
-            </div>
+        <div class="form-row">
+            <label for="{{ field.id_forlabel }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+            <small class="form-error">{{ error }}</small>
+            {% endfor %}
+        </div>
         {% endfor %}
         {# Ошибки типа: неверный логин или пароль #}
         {% for error in form.non_field_errors %}
-            <p class="form-error">{{ error }}</p>
+        <p class="form-error">{{ error }}</p>
         {% endfor %}
         <button type="submit" class="btn">Войти</button>
     </form>

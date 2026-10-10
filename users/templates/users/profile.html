@@ -4,22 +4,22 @@
 {% block title %}Профиль - HotelHub{% endblock %}
 
 {% block page_title%}Личный кабинет{% endblock %}
-{% block page_subtitle%}Ваши данные и бронирование{% endblock %}
+{% block page_subtitle%}Ваши данные и бронирования{% endblock %}
 
 {% block content %}
 {# Основной контейнер станицы профиля #}
 <div class="profile">
     {# Левая часть профиля - информация о пользователе #}
     <aside class="profile-card">
-        
+
         {# Если у пользователя загружен аватар - показываем его #}
         {% if profile_user.avatar %}
-            <img src="{{ profile_user.avatar.url }}" alt="Аватар" class="avatar">
+        <img src="{{ profile_user.avatar.url }}" alt="Аватар" class="avatar">
         {% else %}
-            {# Если аватара нет - показываем заглушку с первой буквой имени пользователя #}
-            <div class="avatar avatar-placeholder">
-                {{ profile_user.username.0|upper }}
-            </div>
+        {# Если аватара нет - показываем заглушку с первой буквой имени пользователя #}
+        <div class="avatar avatar-placeholder">
+            {{ profile_user.username.0|upper }}
+        </div>
         {% endif %}
 
         {# Имя пользователя #}
@@ -43,9 +43,13 @@
                 <b>{{ profile_user.date_joined|date:"d.m.Y" }}</b>
             </li>
         </ul>
-        
+        <a href="{% url 'users:profile_edit' %}" class="btn btn-outline">Редактировать профиль</a>
+
         {# Ссылка для выхода из аккаунта #}
-        <a href="{% url 'users:logout' %}" class="btn btn-outline">Выйти</a>
+        <form method="post" action="{% url 'users:logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline">Выйти</button>
+        </form>
     </aside>
 
     {# Правая часть профиля - список бронирований пользователя #}
@@ -53,38 +57,35 @@
         <h3>Мои бронирования</h3>
         {# Проверяем, есть ли у пользователя бронирования #}
         {% if bookings %}
-            {# Контейнер для списка бронирования #}
-            <div class="booking-list">
-                {# Переберем все бронирования пользователя #}
-                {% for booking in bookings %}
-                    
-                    {# Одна строка с информацией о бронировании #}
-                    <article class="booking-row status-{{ booking.status }}">
-                        <div>
-                            {# Название отлея и номер забронированной комнаты #}
-                            <b>{{ booking.room.hotel.name }}</b>
-                            номер {{ booking.room.number }}
-                            <br>
-                            {# Даты проживания, кол-во ночей и общая стоимость бронирования #}
-                            <small>
-                                {{ booking.check_in|date:"d.m.Y" }} — {{ booking.check_out|date:"d.m.Y" }}
-                                • {{ booking.night }} ноч.
-                                • {{ booking.total_orice|intcomma }} ₸
-                            </small>                            
-                        </div>
+        {# Контейнер для списка бронирования #}
+        <div class="booking-list">
+            {# Переберем все бронирования пользователя #}
+            {% for booking in bookings %}
 
-                        {# get_status_display - название статуса для пользователя #}
-                        <span class="badge">{{ booking.get_status_display }}</span>
+            {# Одна строка с информацией о бронировании #}
+            <article class="booking-row status-{{ booking.status }}">
+                <div>
+                    {# Название отлея и номер забронированной комнаты #}
+                    <b>{{ booking.room.hotel.name }}</b>номер {{ booking.room.number }}<br>
+                    {# Даты проживания, кол-во ночей и общая стоимость бронирования #}
+                    <small>
+                        {{ booking.check_in|date:"d.m.Y" }} — {{ booking.check_out|date:"d.m.Y" }}
+                        • {{ booking.night }} ноч.
+                        • {{ booking.total_orice|intcomma }} ₸
+                    </small>
+                </div>
 
-                    </article>
-                {% endfor %}
-            </div>
+                {# get_status_display - название статуса для пользователя #}
+                <span class="badge">{{ booking.get_status_display }}</span>
+            </article>
+            {% endfor %}
+        </div>
         {% else %}
-            {# Если бронирований нет, то показываем сообщение и ссылку на страницу с выбором номера #}
-            <p class="empty">
-                У вас пока нет бронирований.
-                <a href="{% url 'rooms:rooms_list' %}">Выбрать номер</a>
-            </p>
+        {# Если бронирований нет, то показываем сообщение и ссылку на страницу с выбором номера #}
+        <p class="empty">
+            У вас пока нет бронирований.
+            <a href="{% url 'rooms:rooms_list' %}">Выбрать номер</a>
+        </p>
         {% endif %}
     </section>
 </div>

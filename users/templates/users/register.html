@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-{# Заголовок #}
 {% block title %}Регистрация — HotelHub{% endblock %}
 
 {% block page_title%}Создание аккаунта{% endblock %}
@@ -13,19 +12,19 @@
         {% csrf_token %}
         {# Выводим все поля последовательно #}
         {% for field in form %}
-            <div class="form-row">
-                <label for="{{ field.id_for_field }}">{{ field.label }}</label>
-                {{ field }}
-                
-                {% if field.help_text %}
-                    <small class="form-hint">{{ field.help_text|safe }}</small>
-                {% endif %}
+        <div class="form-row">
+            <label for="{{ field.id_for_field }}">{{ field.label }}</label>
+            {{ field }}
 
-                {# Ошибки, относящиеся к текущему полю #}
-                {% for error in field.errors %}
-                    <small class="form-error">{{ error }}</small>
-                {% endfor %}
-            </div>
+            {% if field.help_text %}
+            <small class="form-hint">{{ field.help_text|safe }}</small>
+            {% endif %}
+
+            {# Ошибки, относящиеся к текущему полю #}
+            {% for error in field.errors %}
+            <small class="form-error">{{ error }}</small>
+            {% endfor %}
+        </div>
         {% endfor %}
 
         {# Кнопка отправки формы регистрации #}
