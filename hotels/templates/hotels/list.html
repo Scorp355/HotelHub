@@ -23,9 +23,10 @@
     <div class="input-group">
         <label for="sort">Сортировка</label>
         <select name="sort" id="sort">
-            <option value="-rating" {% if sort=='-rating' or not sort %}selected{% endif %}>Сначала по рейтингу</option>
-            <option value="price" {% if sort=='price' %}selected{% endif %}>Сначала дешевле</option>
-            <option value="-price" {% if sort=='-price' %}selected{% endif %}>Сначала дороже</option>
+            <option value="-rating" {% if sort == '-rating' or not sort %} selected {% endif %}>Сначала по рейтингу
+            </option>
+            <option value="price" {% if sort == 'price' %} selected {% endif %}>Сначала дешевле</option>
+            <option value="-price" {% if sort == '-price' %} selected {% endif %}>Сначала дороже</option>
         </select>
     </div>
     <button type="submit" class="search-btn">Искать</button>

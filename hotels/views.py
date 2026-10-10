@@ -15,7 +15,7 @@ from . forms import HotelImportForm
 class HotelListView(ListView):
 
     model = Hotel
-    template_name = 'hotel/list.html'
+    template_name = 'hotels/list.html'
     context_object_name = 'hotels'
     paginate_by = 6
 

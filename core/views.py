@@ -7,7 +7,7 @@ from rooms.models import Room
 def home_view(request):
     top_hotels = Hotel.objects.filter(is_active=True).order_by('-rating')[:3]
 
-    featured_rooms = Room.objects.on_suly().with_today_status().select_related('hotel')[:3]
+    featured_rooms = Room.objects.on_sale().with_today_status().select_related('hotel')[:3]
 
     stats = {
         'hotels': Hotel.objects.filter(is_active=True).count(),

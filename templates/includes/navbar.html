@@ -8,7 +8,7 @@
                 class="{% if request.resolver_match.namespace == 'hotels' %}active{% endif %}">
                 Отели
             </a>
-            <a href="{% url 'rooms:room_list' %}"
+            <a href="{% url 'rooms:rooms_list' %}"
                 class="{% if request.resolver_match.namespace == 'rooms' %}active{% endif %}">
                 Номера
             </a>

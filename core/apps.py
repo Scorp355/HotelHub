@@ -12,7 +12,7 @@ class CoreConfig(AppConfig):
 
 
 def _register_unicode_lower(sender, connection, **kwargs):
-    if connection.vender == 'sqlite':
+    if connection.vendor == 'sqlite':
         connection.connection.create_function('LOWER', 1, _py_lower)
 
 

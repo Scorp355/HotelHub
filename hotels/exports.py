@@ -41,7 +41,7 @@ def export_hotels_xlsx(request):
 
     for col_cells in ws.columns:
         lenght = max(len(str(c.value)) for c in col_cells if c.value is not None)
-        ws.column_dimensions[col_cells[0]column_letter].width = lenght + 4
+        ws.column_dimensions[col_cells[0].column_letter].width = lenght + 4
 
     buffer = io.BytesIO()
     wb.save(buffer)

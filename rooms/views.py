@@ -29,6 +29,7 @@ class RoomListView(ListView):
                 ))            
 
         form = RoomSearchForm(self.request.GET)
+        sort_field = 'price_night'
         if form.is_valid():
             check_in = form.cleaned_data.get('check_in')
             check_out = form.cleaned_data.get('check_out')

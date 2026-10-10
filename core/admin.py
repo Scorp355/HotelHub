@@ -1,5 +1,5 @@
-from django.contrib import admin
-from . models import PromoOffer, Review, Facility, FAQItem, ContactMessage
+# from django.contrib import admin
+# from . models import PromoOffer, Review, Facility, FAQItem, ContactMessage
 
 
 # @admin.register(PromoOffer)
