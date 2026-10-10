@@ -17,16 +17,16 @@ class RoomListView(ListView):
     paginate_by = 6     # Максимум 6 номеров на одной странице
     
     def get_queryset(self):
-        queryset = Room.objects.filter(is_available=True).select_related('hotel')
+        queryset = Room.objects.filter(is_available=True).select_related('hotel').with_today_status()
 
         query = self.request.GET.get('q', '')
         if query:
             matching_types = [code for code, label in Room.ROOM_TYPES
                               if query.lower() in label.lower()]
-            queryset = queryset.annotate(hotel_name_lower=Lower('hotel_name').filter(
+            queryset = queryset.annotate(hotel_name_lower=Lower('hotel__name')).filter(
                     Q(hotel_name_lower__contains=query.lower())
                     | Q(room_type__in=matching_types)
-                ))            
+                )           
 
         form = RoomSearchForm(self.request.GET)
         sort_field = 'price_night'

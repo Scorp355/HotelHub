@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     number=number,
                     defaults={
                         'room_type': rtype,
-                        'price_per_night': BASE_PRICES[rtype],
+                        'price_night': BASE_PRICES[rtype],
                         'capacity': CAPACITY[rtype],
                         'is_available': True,
                         'description': (

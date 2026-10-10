@@ -16,13 +16,13 @@ class HomePageTests(TestCase):
     """Тесты главной страницы (витрины)."""
     def setUp(self):
         self.h1 = Hotel.objects.create(name='Grand Astana', city='Астана',
-                                       address='а', price=45000, rating=4.9)
+                                       address='а', price_night=45000, rating=4.9)
         self.h2 = Hotel.objects.create(name='Almaty Plaza', city='Алматы',
-                                       address='б', price=38000, rating=4.5)
+                                       address='б', price_night=38000, rating=4.5)
         Room.objects.create(hotel=self.h1, number='101',
-                           room_type='double', price_per_night=15000, is_available=True)
+                           room_type='double', price_night=15000, is_available=True)
         Room.objects.create(hotel=self.h2, number='201',
-                           room_type='single', price_per_night=12000, is_available=True)
+                           room_type='single', price_night=12000, is_available=True)
 
     def test_home_page_ok(self):
         """Главная открывается со статусом 200 и нужным шаблоном."""

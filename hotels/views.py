@@ -43,7 +43,7 @@ class HotelListView(ListView):
 def hotel_detail(request, pk):
     hotel = get_object_or_404(Hotel.objects.with_stats(), pk=pk, is_active=True)
     rooms = hotel.rooms.on_sale().with_today_status()
-    return render(request, 'hotels/detail.html', {
+    return render(request, 'hotels/hotel_detail.html', {
         'hotel': hotel,
         'rooms': rooms
     })
@@ -101,7 +101,7 @@ def import_hotels(request):
                                 name=row['name'].strip(),
                                 city=row['city'].strip(),
                                 address=row['address'].strip(),
-                                price=row['price'],
+                                price_night=row['price'],
                                 rating=row['rating'],
                             )
                             hotel.full_clean()  # прогоняет те же валидаторы, что и форма/админка

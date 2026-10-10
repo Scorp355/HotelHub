@@ -21,14 +21,14 @@ class HotelModelTests(TestCase):
     def test_str_returns_name(self):
         """__str__ возвращает название отеля (видно в админке и шаблонах)."""
         hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='ул. Тест, 1', price=45000,
+            name='Grand Astana', city='Астана', address='ул. Тест, 1', price_night=45000,
         )
         self.assertEqual(str(hotel), 'Grand Astana')
 
     def test_defaults(self):
         """Значения по умолчанию: is_active=True, rating=0."""
         hotel = Hotel.objects.create(
-            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price=38000,
+            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price_night=38000,
         )
         self.assertTrue(hotel.is_active)
         self.assertEqual(hotel.rating, 0)
@@ -40,11 +40,11 @@ class HotelListViewTests(TestCase):
     def setUp(self):
         # Три отеля в разных городах + один неактивный.
         Hotel.objects.create(name='Grand Astana', city='Астана',
-                             address='а', price=45000, is_active=True)
+                             address='а', price_night=45000, is_active=True)
         Hotel.objects.create(name='Almaty Plaza', city='Алматы',
-                             address='б', price=38000, is_active=True)
+                             address='б', price_night=38000, is_active=True)
         Hotel.objects.create(name='Old Hotel', city='Астана',
-                             address='в', price=10000, is_active=False)
+                             address='в', price_night=10000, is_active=False)
 
     def test_list_shows_only_active(self):
         """В списке отображаются только активные отели."""
@@ -71,7 +71,7 @@ class HotelDetailViewTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='ул. Тест, 1', price=45000,
+            name='Grand Astana', city='Астана', address='ул. Тест, 1', price_night=45000,
         )
 
     def test_detail_page_ok(self):
@@ -105,7 +105,7 @@ class HotelListPaginationAndStatsTests(TestCase):
         for i in range(8):
             Hotel.objects.create(
                 name=f'Hotel {i}', city='Астана', address='а',
-                price=10000, rating=3.0 + (i % 5) * 0.4,
+                price_night=10000, rating=3.0 + (i % 5) * 0.4,
             )
 
     def test_first_page_has_six_hotels(self):
@@ -124,18 +124,18 @@ class HotelListPaginationAndStatsTests(TestCase):
         """
         from rooms.models import Room
         hotel = Hotel.objects.create(
-            name='Grand Astana', city='Алматы', address='б', price=99999, rating=4.0,
+            name='Grand Astana', city='Алматы', address='б', price_night=99999, rating=4.0,
         )
-        Room.objects.create(hotel=hotel, number='101', room_type='single', price_per_night=15000)
-        Room.objects.create(hotel=hotel, number='102', room_type='double', price_per_night=20000)
+        Room.objects.create(hotel=hotel, number='101', room_type='single', price_night=15000)
+        Room.objects.create(hotel=hotel, number='102', room_type='double', price_night=20000)
 
         stats = Hotel.objects.with_stats().get(pk=hotel.pk)
         self.assertEqual(stats.min_price, 15000)
         self.assertEqual(stats.rooms_count, 2)
-        self.assertNotEqual(stats.min_price, hotel.price)
+        self.assertNotEqual(stats.min_price, hotel.price_night)
 
     def test_hotel_without_rooms_has_no_min_price(self):
-        hotel = Hotel.objects.create(name='Empty Hotel', city='Астана', address='в', price=5000)
+        hotel = Hotel.objects.create(name='Empty Hotel', city='Астана', address='в', price_night=5000)
         stats = Hotel.objects.with_stats().get(pk=hotel.pk)
         self.assertIsNone(stats.min_price)
 
@@ -148,12 +148,12 @@ class HotelListPaginationAndStatsTests(TestCase):
         возрастанию, что не относится к проверяемому поведению).
         """
         from rooms.models import Room
-        cheap = Hotel.objects.create(name='Cheap', city='Павлодар', address='г', price=1, rating=1)
-        pricey = Hotel.objects.create(name='Pricey', city='Павлодар', address='д', price=1, rating=1)
-        Room.objects.create(hotel=cheap, number='1', room_type='single', price_per_night=5000)
-        Room.objects.create(hotel=pricey, number='1', room_type='single', price_per_night=90000)
+        cheap = Hotel.objects.create(name='Cheap', city='Павлодар', address='г', price_night=1, rating=1)
+        pricey = Hotel.objects.create(name='Pricey', city='Павлодар', address='д', price_night=1, rating=1)
+        Room.objects.create(hotel=cheap, number='1', room_type='single', price_night=5000)
+        Room.objects.create(hotel=pricey, number='1', room_type='single', price_night=90000)
 
-        resp = self.client.get(reverse('hotels:hotel_list'), {'sort': 'price', 'city': 'Павлодар'})
+        resp = self.client.get(reverse('hotels:hotel_list'), {'sort': 'price_night', 'city': 'Павлодар'})
         names = [h.name for h in resp.context['hotels']]
         self.assertEqual(names, ['Cheap', 'Pricey'])
 
@@ -165,12 +165,12 @@ class HotelRatingValidationTests(TestCase):
     """
 
     def test_rating_above_five_is_rejected(self):
-        hotel = Hotel(name='Bad Hotel', city='Тест', address='а', price=1000, rating=17.5)
+        hotel = Hotel(name='Bad Hotel', city='Тест', address='а', price_night=1000, rating=17.5)
         with self.assertRaises(ValidationError):
             hotel.full_clean()
 
     def test_rating_within_range_is_accepted(self):
-        hotel = Hotel(name='Good Hotel', city='Тест', address='а', price=1000, rating=4.5)
+        hotel = Hotel(name='Good Hotel', city='Тест', address='а', price_night=1000, rating=4.5)
         hotel.full_clean()  # не должно бросить исключение
 
 
@@ -191,7 +191,7 @@ class HotelCoverUploadTests(TestCase):
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_valid_image_is_accepted(self):
         hotel = Hotel.objects.create(
-            name='Photo Hotel', city='Тест', address='а', price=1000,
+            name='Photo Hotel', city='Тест', address='а', price_night=1000,
             cover=self._make_image_file(),
         )
         hotel.full_clean()
@@ -200,7 +200,7 @@ class HotelCoverUploadTests(TestCase):
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_disallowed_extension_is_rejected(self):
         bad_file = SimpleUploadedFile('cover.txt', b'not an image', content_type='text/plain')
-        hotel = Hotel(name='Bad Photo Hotel', city='Тест', address='а', price=1000, cover=bad_file)
+        hotel = Hotel(name='Bad Photo Hotel', city='Тест', address='а', price_night=1000, cover=bad_file)
         with self.assertRaises(ValidationError):
             hotel.full_clean()
 
@@ -212,7 +212,7 @@ class HotelExportImportTests(TestCase):
     """
 
     def setUp(self):
-        Hotel.objects.create(name='Grand Astana', city='Астана', address='а', price=45000, rating=4.7)
+        Hotel.objects.create(name='Grand Astana', city='Астана', address='а', price_night=45000, rating=4.7)
         self.staff = User.objects.create_user(username='staff', password='pass12345', is_staff=True)
         self.staff.user_permissions.add(
             Permission.objects.get(codename='add_hotel', content_type__app_label='hotels')

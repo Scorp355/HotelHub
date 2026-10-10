@@ -21,7 +21,7 @@ class BookingModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.hotel = Hotel.objects.create(name='Test Hotel', city='Астана', address='ул. Тест, 1',
-                                          price=30000)
+                                          price_night=30000)
         self.room = Room.objects.create(hotel=self.hotel, number='101', room_type='double',
                                         price_night=15000, capacity=2)
 
@@ -42,7 +42,7 @@ class BookingServiceTest(TestCase):
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.other = User.objects.create_user(username='other', password='pass12345')
         self.hotel = Hotel.objects.create(name='Test Hotel', city='Астана', address='ул. Тест, 1',
-                                                  price=30000)
+                                                  price_night=30000)
         self.room = Room.objects.create(hotel=self.hotel, number='101', room_type='double',
                                                 price_night=15000, capacity=2)
         self.today = date.today()
@@ -181,11 +181,11 @@ class BookingViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.hotel = Hotel.objects.create(
-            name='Test Hotel', city='Астана', address='ул. Тест, 1', price=30000,
+            name='Test Hotel', city='Астана', address='ул. Тест, 1', price_night=30000,
         )
         self.room = Room.objects.create(
             hotel=self.hotel, number='101', room_type='double',
-            price_per_night=15000, capacity=2,
+            price_night=15000, capacity=2,
         )
         self.today = date.today()
 

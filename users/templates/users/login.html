@@ -8,8 +8,8 @@
 <div class="form-card">
     <form method="post" novalidate>
         {% csrf_token %}
-        {% if next %}
-        <input type="hidden" name="next" value="{{ next }}">
+        {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
         {% endif %}
 
         {% for field in form %}

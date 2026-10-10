@@ -18,37 +18,37 @@ class RoomModelTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='ул. Тест, 1', price=45000,
+            name='Grand Astana', city='Астана', address='ул. Тест, 1', price_night=45000,
         )
 
     def test_str_representation(self):
         """__str__ показывает отель и номер комнаты."""
         room = Room.objects.create(
-            hotel=self.hotel, number='101', room_type='single', price_per_night=12000,
+            hotel=self.hotel, number='101', room_type='single', price_night=12000,
         )
         self.assertEqual(str(room), 'Grand Astana — номер 101')
 
     def test_unique_number_per_hotel(self):
         """Нельзя создать два номера с одинаковым числом в одном отеле."""
         Room.objects.create(
-            hotel=self.hotel, number='101', room_type='single', price_per_night=12000,
+            hotel=self.hotel, number='101', room_type='single', price_night=12000,
         )
         # Второй '101' в том же отеле нарушает UniqueConstraint.
         with self.assertRaises(IntegrityError):
             Room.objects.create(
-                hotel=self.hotel, number='101', room_type='double', price_per_night=18000,
+                hotel=self.hotel, number='101', room_type='double', price_night=18000,
             )
 
     def test_same_number_different_hotels_allowed(self):
         """Одинаковый номер в РАЗНЫХ отелях разрешён."""
         other_hotel = Hotel.objects.create(
-            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price=38000,
+            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price_night=38000,
         )
         Room.objects.create(hotel=self.hotel, number='101',
-                           room_type='single', price_per_night=12000)
+                           room_type='single', price_night=12000)
         # Тот же '101', но другой отель — конфликта нет.
         Room.objects.create(hotel=other_hotel, number='101',
-                           room_type='single', price_per_night=12000)
+                           room_type='single', price_night=12000)
         self.assertEqual(Room.objects.filter(number='101').count(), 2)
 
 
@@ -57,39 +57,39 @@ class RoomListViewTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='ул. Тест, 1', price=45000,
+            name='Grand Astana', city='Астана', address='ул. Тест, 1', price_night=45000,
         )
         self.other = Hotel.objects.create(
-            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price=38000,
+            name='Almaty Plaza', city='Алматы', address='ул. Достык, 85', price_night=38000,
         )
         Room.objects.create(hotel=self.hotel, number='101',
-                           room_type='suite', price_per_night=32000, capacity=2)
+                           room_type='suite', price_night=32000, capacity=2)
         Room.objects.create(hotel=self.other, number='201',
-                           room_type='single', price_per_night=12000, capacity=1)
+                           room_type='single', price_night=12000, capacity=1)
 
     def test_list_ok(self):
         """Список номеров открывается со статусом 200."""
-        resp = self.client.get(reverse('rooms:room_list'))
+        resp = self.client.get(reverse('rooms:rooms_list'))
         self.assertEqual(resp.status_code, 200)
 
     def test_search_by_hotel_name(self):
         """Поиск ?q=Almaty находит номера отеля Almaty Plaza."""
-        resp = self.client.get(reverse('rooms:room_list'), {'q': 'Almaty'})
+        resp = self.client.get(reverse('rooms:rooms_list'), {'q': 'Almaty'})
         self.assertContains(resp, '201')
         self.assertNotContains(resp, '№ 101')
 
     def test_search_by_room_type_label(self):
         """Поиск ?q=люкс находит номера типа suite (по человекочит. названию)."""
-        resp = self.client.get(reverse('rooms:room_list'), {'q': 'люкс'})
+        resp = self.client.get(reverse('rooms:rooms_list'), {'q': 'люкс'})
         # Отель, где есть suite-номер, должен присутствовать.
         self.assertContains(resp, 'Grand Astana')
 
     def test_unavailable_room_hidden(self):
         """Занятые номера (is_available=False) не показываются в списке."""
         Room.objects.create(hotel=self.hotel, number='999',
-                           room_type='single', price_per_night=12000,
+                           room_type='single', price_night=12000,
                            is_available=False)
-        resp = self.client.get(reverse('rooms:room_list'))
+        resp = self.client.get(reverse('rooms:rooms_list'))
         self.assertNotContains(resp, '999')
 
 
@@ -98,10 +98,10 @@ class RoomDetailViewTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='ул. Тест, 1', price=45000,
+            name='Grand Astana', city='Астана', address='ул. Тест, 1', price_night=45000,
         )
         self.room = Room.objects.create(
-            hotel=self.hotel, number='101', room_type='double', price_per_night=15000,
+            hotel=self.hotel, number='101', room_type='double', price_night=15000,
         )
 
     def test_detail_ok(self):
@@ -141,10 +141,10 @@ class RoomAvailabilitySearchTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='а', price=45000,
+            name='Grand Astana', city='Астана', address='а', price_night=45000,
         )
         self.room = Room.objects.create(
-            hotel=self.hotel, number='101', room_type='single', price_per_night=10000,
+            hotel=self.hotel, number='101', room_type='single', price_night=10000,
         )
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.today = date.today()
@@ -191,10 +191,10 @@ class RoomTodayStatusTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='а', price=45000,
+            name='Grand Astana', city='Астана', address='а', price_night=45000,
         )
         self.room = Room.objects.create(
-            hotel=self.hotel, number='101', room_type='single', price_per_night=10000,
+            hotel=self.hotel, number='101', room_type='single', price_night=10000,
         )
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.today = date.today()
@@ -237,13 +237,13 @@ class RoomTodayStatusTests(TestCase):
         на сегодня номера, и «Свободен» для второго, свободного."""
         from bookings.models import Booking
         free_room = Room.objects.create(
-            hotel=self.hotel, number='102', room_type='single', price_per_night=12000,
+            hotel=self.hotel, number='102', room_type='single', price_night=12000,
         )
         Booking.objects.create(
             user=self.user, room=self.room, status='confirmed',
             check_in=self.today, check_out=self.today + timedelta(days=1),
         )
-        resp = self.client.get(reverse('rooms:room_list'))
+        resp = self.client.get(reverse('rooms:rooms_list'))
         self.assertContains(resp, 'Занят сегодня')
         self.assertContains(resp, 'Свободен')
 
@@ -257,24 +257,24 @@ class RoomListDatesAndSortTests(TestCase):
 
     def setUp(self):
         self.hotel = Hotel.objects.create(
-            name='Grand Astana', city='Астана', address='а', price=45000,
+            name='Grand Astana', city='Астана', address='а', price_night=45000,
         )
         self.cheap = Room.objects.create(
-            hotel=self.hotel, number='101', room_type='single', price_per_night=10000,
+            hotel=self.hotel, number='101', room_type='single', price_night=10000,
         )
         self.expensive = Room.objects.create(
-            hotel=self.hotel, number='201', room_type='suite', price_per_night=50000,
+            hotel=self.hotel, number='201', room_type='suite', price_night=50000,
         )
         self.user = User.objects.create_user(username='guest', password='pass12345')
         self.today = date.today()
 
     def test_default_sort_is_cheapest_first(self):
-        resp = self.client.get(reverse('rooms:room_list'))
+        resp = self.client.get(reverse('rooms:rooms_list'))
         rooms = list(resp.context['rooms'])
         self.assertEqual(rooms[0], self.cheap)
 
     def test_sort_by_price_descending(self):
-        resp = self.client.get(reverse('rooms:room_list'), {'sort_by': '-price'})
+        resp = self.client.get(reverse('rooms:rooms_list'), {'sort_by': '-price'})
         rooms = list(resp.context['rooms'])
         self.assertEqual(rooms[0], self.expensive)
 
@@ -285,7 +285,7 @@ class RoomListDatesAndSortTests(TestCase):
             check_in=self.today + timedelta(days=5),
             check_out=self.today + timedelta(days=8),
         )
-        resp = self.client.get(reverse('rooms:room_list'), {
+        resp = self.client.get(reverse('rooms:rooms_list'), {
             'check_in': (self.today + timedelta(days=6)).isoformat(),
             'check_out': (self.today + timedelta(days=7)).isoformat(),
         })
@@ -298,7 +298,7 @@ class RoomListDatesAndSortTests(TestCase):
         Некорректные даты (выезд раньше заезда) не должны положить страницу
         500-й ошибкой — просто игнорируются формой, список остаётся полным.
         """
-        resp = self.client.get(reverse('rooms:room_list'), {
+        resp = self.client.get(reverse('rooms:rooms_list'), {
             'check_in': (self.today + timedelta(days=10)).isoformat(),
             'check_out': (self.today + timedelta(days=5)).isoformat(),
         })
@@ -309,19 +309,19 @@ class RoomListDatesAndSortTests(TestCase):
 class RoomListPaginationTests(TestCase):
 
     def setUp(self):
-        hotel = Hotel.objects.create(name='Grand Astana', city='Астана', address='а', price=45000)
+        hotel = Hotel.objects.create(name='Grand Astana', city='Астана', address='а', price_night=45000)
         for i in range(8):
             Room.objects.create(
-                hotel=hotel, number=str(100 + i), room_type='single', price_per_night=10000 + i,
+                hotel=hotel, number=str(100 + i), room_type='single', price_night=10000 + i,
             )
 
     def test_first_page_has_six_rooms(self):
-        resp = self.client.get(reverse('rooms:room_list'))
+        resp = self.client.get(reverse('rooms:rooms_list'))
         self.assertEqual(len(resp.context['rooms']), 6)
         self.assertTrue(resp.context['is_paginated'])
 
     def test_second_page_has_remaining_rooms(self):
-        resp = self.client.get(reverse('rooms:room_list'), {'page': 2})
+        resp = self.client.get(reverse('rooms:rooms_list'), {'page': 2})
         self.assertEqual(len(resp.context['rooms']), 2)
 
 

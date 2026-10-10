@@ -35,18 +35,20 @@ def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
 
-        user = form.get_user()
-        login(request, user)      
-        messages.success(request, f'Вы вошли как {user.username}')
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)      
+            messages.success(request, f'Вы вошли как {user.username}')
 
-        next_url = request.POST.get('next') or request.GET.get('next')
+            next_url = request.POST.get('next') or request.GET.get('next')
 
-        if next_url and url_has_allowed_host_and_scheme(
-            next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-        ):
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+            ):
+                return redirect(next_url)
             return redirect('users:profile')
     else:
-        form = AuthenticationForm()
+        form = AuthenticationForm(request)
         
     return render(request, 'users/login.html', {
         'form': form,

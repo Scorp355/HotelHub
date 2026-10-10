@@ -21,9 +21,9 @@
         </div>
         <div class="booking-side">
             <span class="price">{{ booking.total_price|intcomma }} ₸</span>
-            {% if booking.status != 'canselled' %}
-            <form action="{% url 'bookings:cansel' booking.pk %}" method="post">
-                {% scrf_token %}
+            {% if booking.status != 'cancelled' %}
+            <form action="{% url 'bookings:cancel' booking.pk %}" method="post">
+                {% csrf_token %}
                 <button type="submit" class="btn btn-outline btn-sm">Отменить</button>
             </form>
             {% endif %}
