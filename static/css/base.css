@@ -782,3 +782,24 @@ a:hover {
 .current-page {
     color: var(--color-text-muted);
 }
+
+
+
+/* В рамках экзаменационного задания В.2 */
+.hotel-category {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.hotel-category--premium {
+    background-color: #fff0c2;
+    color: #805600;
+}
+
+.hotel-category--standard {
+    background-color: #e8edf2;
+    color: #455468;
+}

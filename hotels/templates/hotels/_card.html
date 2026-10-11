@@ -27,6 +27,17 @@
         {% else %}
         <span class="price">{{ hotel.price|intcomma }} ₸ / ночь</span>
         {% endif %}
+
         <span class="rating">★ {{ hotel.rating|floatformat:1 }}</span>
+
+        {% if hotel.category == 'Премиум' %}
+        <span class="hotel-category hotel-category--premium">
+            {{ hotel.category }}
+        </span>
+        {% else %}
+        <span class="hotel-category hotel-category--standard">
+            {{ hotel.category }}
+        </span>
+        {% endif %}
     </div>
 </article>

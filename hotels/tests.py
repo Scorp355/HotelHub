@@ -666,3 +666,110 @@ class HotelLastBookingDateTests(TestCase):
             other_hotel.last_booking_date,
             other_booking.created_at,
         )
+
+
+class HotelStatsConditionalExpressionsTests(TestCase):
+    """Тесты Case/When и условного подсчёта бронирований."""
+    
+    def setUp(self):
+        from datetime import date, timedelta
+        from django.contrib.auth import get_user_model
+        from rooms.models import Room
+    
+        self.hotel_premium = Hotel.objects.create(
+            name='Premium Hotel',
+            city='Астана',
+            address='Адрес 1',
+            price_night=50000,
+            rating=4.5,
+        )
+        self.hotel_standard = Hotel.objects.create(
+            name='Standard Hotel',
+            city='Алматы',
+            address='Адрес 2',
+            price_night=20000,
+            rating=4.4,
+        )
+    
+        self.room_premium = Room.objects.create(
+            hotel=self.hotel_premium,
+            number='101',
+            room_type='single',
+            price_night=15000,
+        )
+        self.room_standard = Room.objects.create(
+            hotel=self.hotel_standard,
+            number='201',
+            room_type='double',
+            price_night=10000,
+        )
+    
+        self.user = get_user_model().objects.create_user(
+            username='hotel_stats_user',
+            password='test-password-123',
+        )
+    
+        self.check_in = date.today() + timedelta(days=1)
+        self.check_out = date.today() + timedelta(days=3)
+    
+    def create_booking(self, room, status):
+        """Создаёт бронирование с заданным статусом."""
+        from bookings.models import Booking
+    
+        return Booking.objects.create(
+            user=self.user,
+            room=room,
+            check_in=self.check_in,
+            check_out=self.check_out,
+            guests=1,
+            status=status,
+        )
+    
+    def test_rating_45_is_premium(self):
+        """Рейтинг 4.5 включительно соответствует категории «Премиум»."""
+        hotel = Hotel.objects.with_stats().get(
+            pk=self.hotel_premium.pk
+        )
+    
+        self.assertEqual(hotel.category, 'Премиум')
+    
+    def test_rating_below_45_is_standard(self):
+        """Рейтинг ниже 4.5 соответствует категории «Стандарт»."""
+        hotel = Hotel.objects.with_stats().get(
+            pk=self.hotel_standard.pk
+        )
+    
+        self.assertEqual(hotel.category, 'Стандарт')
+    
+    def test_counts_only_confirmed_bookings(self):
+        """В статистику входят только подтверждённые бронирования."""
+        self.create_booking(self.room_premium, 'confirmed')
+        self.create_booking(self.room_premium, 'confirmed')
+        self.create_booking(self.room_premium, 'pending')
+    
+        hotel = Hotel.objects.with_stats().get(
+            pk=self.hotel_premium.pk
+        )
+    
+        self.assertEqual(hotel.confirmed_bookings_count, 2)
+    
+    def test_booking_counts_are_independent_for_each_hotel(self):
+        """Бронирования разных отелей подсчитываются независимо."""
+        self.create_booking(self.room_premium, 'confirmed')
+        self.create_booking(self.room_premium, 'confirmed')
+        self.create_booking(self.room_standard, 'confirmed')
+    
+        hotels = Hotel.objects.with_stats()
+        premium = hotels.get(pk=self.hotel_premium.pk)
+        standard = hotels.get(pk=self.hotel_standard.pk)
+    
+        self.assertEqual(premium.confirmed_bookings_count, 2)
+        self.assertEqual(standard.confirmed_bookings_count, 1)
+    
+    def test_hotel_without_bookings_has_zero_confirmed_bookings(self):
+        """Если броней нет, условный подсчёт возвращает ноль."""
+        hotel = Hotel.objects.with_stats().get(
+            pk=self.hotel_premium.pk
+        )
+    
+        self.assertEqual(hotel.confirmed_bookings_count, 0)
