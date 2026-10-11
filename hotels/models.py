@@ -1,6 +1,6 @@
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Count, Min
+from django.db.models import Count, Min, OuterRef, Subquery
 
 from core.validators import ALLOVED_IMAGE_EXTENSIONS, validate_images_size
 
@@ -11,6 +11,13 @@ class HotelQuerySet(models.QuerySet):
 
     def with_stats(self):
         return self.annotate(min_price=Min('rooms__price_night'), rooms_count=Count('rooms', distinct=True))
+
+    def with_last_booking_date(self):
+        """Аннотирует отель датой создания последней брони."""
+        from bookings.models import Booking
+        
+        last_booking = Booking.objects.filter(room__hotel_id=OuterRef('pk')).order_by('-created_at')
+        return self.annotate(last_booking_date=Subquery(last_booking.values('created_at')[:1]))
 
 
 def hotel_cover_path(instance, filename):

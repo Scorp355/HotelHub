@@ -1,8 +1,11 @@
 from io import StringIO
+from unittest.mock import patch
+
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 
 from hotels.models import Hotel
 from rooms.models import Room
@@ -78,3 +81,88 @@ class SeedCommandTests(TestCase):
         # После flush + пересоздания данные снова на месте.
         self.assertGreater(Hotel.objects.count(), 0)
         self.assertTrue(User.objects.filter(username='admin').exists())
+
+
+class HomeStatsCacheTests(TestCase):
+    """Тесты кеширования статистики главной страницы."""
+
+    def setUp(self):
+        cache.clear()
+
+        self.hotel = Hotel.objects.create(
+            name='Cache Hotel',
+            city='Астана',
+            address='Тестовый адрес',
+            price_night=20000,
+        )
+        self.room = Room.objects.create(
+            hotel=self.hotel,
+            number='901',
+            price_night=10000,
+            is_available=True,
+        )
+
+        # Создание тестовых объектов вызывает сигналы,
+        # поэтому заполняем кеш уже после их создания.
+        cache.set('home_stats', {'hotels': 99}, timeout=300)
+
+    def tearDown(self):
+        cache.clear()
+
+    def test_home_stats_are_reused_from_cache(self):
+        """Повторный запрос использует статистику из кеша."""
+        cached_stats = {
+            'hotels': 99,
+            'rooms': 88,
+            'cities': 77,
+        }
+
+        cache.set('home_stats', cached_stats, timeout=300)
+
+        with patch(
+            'core.views.get_home_stats',
+            return_value={'hotels': 1, 'rooms': 1, 'cities': 1},
+        ) as stats_mock:
+            response = self.client.get(reverse('core:home'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['stats'], cached_stats)
+        stats_mock.assert_not_called()
+
+    def test_hotel_save_invalidates_cache(self):
+        """Сохранение отеля удаляет кеш статистики."""
+        self.hotel.rating = 4.5
+        self.hotel.save()
+
+        self.assertIsNone(cache.get('home_stats'))
+
+    def test_hotel_delete_invalidates_cache(self):
+        """Удаление отеля удаляет кеш статистики."""
+        self.hotel.delete()
+
+        self.assertIsNone(cache.get('home_stats'))
+
+    def test_room_save_invalidates_cache(self):
+        """Сохранение номера удаляет кеш статистики."""
+        self.room.is_available = False
+        self.room.save()
+
+        self.assertIsNone(cache.get('home_stats'))
+
+    def test_room_delete_invalidates_cache(self):
+        """Удаление номера удаляет кеш статистики."""
+        self.room.delete()
+
+        self.assertIsNone(cache.get('home_stats'))
+
+    def test_home_stats_returns_expected_counts(self):
+        """Статистика рассчитывается по фактическим данным."""
+        from core.views import get_home_stats
+
+        cache.clear()
+
+        stats = get_home_stats()
+
+        self.assertEqual(stats['hotels'], 1)
+        self.assertEqual(stats['rooms'], 1)
+        self.assertEqual(stats['cities'], 1)

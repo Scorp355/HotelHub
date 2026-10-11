@@ -62,6 +62,6 @@ class Booking(models.Model):
         return self.room.price_night * nights
 
     @property
-    def vaucher_token(self):
+    def voucher_token(self):
         from .voucher import create_voucher_token
         return create_voucher_token(self)

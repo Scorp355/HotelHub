@@ -1,6 +1,17 @@
 from django.shortcuts import render
+from django.core.cache import cache
+
 from hotels.models import Hotel
 from rooms.models import Room
+
+
+def get_home_stats():
+    """Возвращает статистику главной страницы."""
+    return {
+        'hotels': Hotel.objects.filter(is_active=True).count(),
+        'rooms': Room.objects.on_sale().count(),
+        'cities': Hotel.objects.values('city').distinct().count(),
+    }
 
 
 # Главная функция нашей страницы v2
@@ -9,11 +20,7 @@ def home_view(request):
 
     featured_rooms = Room.objects.on_sale().with_today_status().select_related('hotel')[:3]
 
-    stats = {
-        'hotels': Hotel.objects.filter(is_active=True).count(),
-        'rooms': Room.objects.on_sale().count(),
-        'cities': Hotel.objects.values('city').distinct().count()
-    }
+    stats = cache.get_or_set('home_stats', get_home_stats, timeout=300)
 
     return render(request, 'core/home.html', {
         'top_hotels': top_hotels,

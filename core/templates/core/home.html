@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load cache %}
 
 {% block title %}HotelHub - поиск и бронироание отелей{% endblock %}
 
@@ -29,6 +30,8 @@
         <h2>Популярные отели</h2>
         <a href="{% url 'hotels:hotel_list' %}">Все отели →</a>
     </div>
+
+    {% cache 300 popular_hotels %}
     {% if top_hotels %}
     <div class="card_grid">
         {% for hotel in top_hotels %}
@@ -38,6 +41,8 @@
     {% else %}
     <p class="empty">Отели пока не добавлены</p>
     {% endif %}
+    {% endcache %}
+
 </section>
 
 <section class="home-section">

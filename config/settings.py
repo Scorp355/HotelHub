@@ -34,6 +34,14 @@ INSTALLED_APPS = [
     'bookings.apps.BookingsConfig',    
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'hotelhub-cache',
+        'TIMEOUT': 300,
+    }
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

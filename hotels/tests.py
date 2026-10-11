@@ -544,3 +544,125 @@ class HotelCityCookieTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['city'], '')
+
+
+
+class HotelLastBookingDateTests(TestCase):
+    """Тесты аннотации даты последнего бронирования."""
+
+    def setUp(self):
+        from rooms.models import Room
+        from bookings.models import Booking
+        from django.contrib.auth import get_user_model
+        from datetime import date, timedelta
+
+        self.Room = Room
+        self.Booking = Booking
+        self.User = get_user_model()
+
+        self.hotel = Hotel.objects.create(
+            name='Booking Hotel',
+            city='Астана',
+            address='Тестовый адрес',
+            price_night=20000,
+        )
+        self.other_hotel = Hotel.objects.create(
+            name='Other Hotel',
+            city='Алматы',
+            address='Другой адрес',
+            price_night=25000,
+        )
+
+        self.room = Room.objects.create(
+            hotel=self.hotel,
+            number='901',
+            room_type='single',
+            price_night=10000,
+        )
+        self.other_room = Room.objects.create(
+            hotel=self.other_hotel,
+            number='101',
+            room_type='double',
+            price_night=15000,
+        )
+
+        self.user = self.User.objects.create_user(
+            username='booking_test_user',
+            password='test-password-123',
+        )
+
+        self.booking_data = {
+            'user': self.user,
+            'room': self.room,
+            'check_in': date.today() + timedelta(days=1),
+            'check_out': date.today() + timedelta(days=3),
+            'guests': 1,
+        }
+
+    def create_booking(self, room, created_at):
+        """Создаёт бронь и задаёт контролируемое время создания."""
+        booking = self.Booking.objects.create(
+            **{**self.booking_data, 'room': room}
+        )
+    
+        self.Booking.objects.filter(pk=booking.pk).update(
+            created_at=created_at
+        )
+    
+        # Обновляем объект из БД, чтобы created_at соответствовал
+        # значению, установленному через QuerySet.update().
+        booking.refresh_from_db()
+    
+        return booking
+
+    def test_uses_latest_booking_date(self):
+        """Выбирается дата самой поздней брони, а не первой созданной."""
+        from datetime import timedelta
+        from django.utils import timezone
+
+        now = timezone.now()
+        self.create_booking(self.room, now - timedelta(days=5))
+        latest_booking = self.create_booking(
+            self.room, now - timedelta(days=1)
+        )
+
+        hotel = Hotel.objects.with_last_booking_date().get(
+            pk=self.hotel.pk
+        )
+
+        self.assertEqual(
+            hotel.last_booking_date,
+            latest_booking.created_at,
+        )
+
+    def test_hotel_without_bookings_has_none(self):
+        """У отеля без броней дата последней брони равна None."""
+        hotel = Hotel.objects.with_last_booking_date().get(
+            pk=self.hotel.pk
+        )
+
+        self.assertIsNone(hotel.last_booking_date)
+
+    def test_booking_date_is_independent_for_each_hotel(self):
+        """Брони другого отеля не влияют на аннотацию."""
+        from datetime import timedelta
+        from django.utils import timezone
+
+        now = timezone.now()
+        self.create_booking(self.room, now - timedelta(days=3))
+        other_booking = self.create_booking(
+            self.other_room, now - timedelta(days=1)
+        )
+
+        hotels = Hotel.objects.with_last_booking_date()
+        hotel = hotels.get(pk=self.hotel.pk)
+        other_hotel = hotels.get(pk=self.other_hotel.pk)
+
+        self.assertNotEqual(
+            hotel.last_booking_date,
+            other_hotel.last_booking_date,
+        )
+        self.assertEqual(
+            other_hotel.last_booking_date,
+            other_booking.created_at,
+        )

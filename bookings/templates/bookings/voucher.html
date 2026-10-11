@@ -8,15 +8,15 @@
 {% block content %}
 <article class="booking-voucher">
     <h2>{{ booking.room.hotel.name }}</h2>
-    <p><strong>Номер:</strong>{{ booking.room.number }}</p>
-    <p><strong>Гость:</strong>{{ booking.user.get_full_name|default:booking.user.username }}</p>
-    <p><strong>Дата заезда:</strong>{{ booking.check_in|date:"d.m.Y" }}</p>
-    <p><strong>Дата выезда:</strong>{{ booking.check_out|date:"d.m.Y" }}</p>
-    <p><strong>Количество ночей:</strong>{{ booking.nights }}</p>
-    <p><strong>Количество гостей:</strong>{{ booking.guests }}</p>
-    <p><strong>Стоимость проживания:</strong>{{ booking.total_price|intcomma }} ₸</p>
-    <p><strong>Статус:</strong>{{ booking.get_status_display }}</p>
-    <p><strong>Номер бронирования:</strong>№{{ booking.pk }}</p>
+    <p><strong>Номер: </strong>{{ booking.room.number }}</p>
+    <p><strong>Гость: </strong>{{ booking.user.get_full_name|default:booking.user.username }}</p>
+    <p><strong>Дата заезда: </strong>{{ booking.check_in|date:"d.m.Y" }}</p>
+    <p><strong>Дата выезда: </strong>{{ booking.check_out|date:"d.m.Y" }}</p>
+    <p><strong>Количество ночей: </strong>{{ booking.nights }}</p>
+    <p><strong>Количество гостей: </strong>{{ booking.guests }}</p>
+    <p><strong>Стоимость проживания: </strong>{{ booking.total_price|intcomma }} ₸</p>
+    <p><strong>Статус: </strong>{{ booking.get_status_display }}</p>
+    <p><strong>Номер бронирования: </strong>№{{ booking.pk }}</p>
 
 </article>
 
