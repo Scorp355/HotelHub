@@ -773,3 +773,15 @@ class HotelStatsConditionalExpressionsTests(TestCase):
         )
     
         self.assertEqual(hotel.confirmed_bookings_count, 0)
+
+
+class AsyncStatsAPITests(TestCase):
+
+    def test_stats_api_returns_hotels_count(self):
+        response = self.client.get(reverse('api_stats'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json()['hotels_count'],
+            Hotel.objects.count(),
+        )

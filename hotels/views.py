@@ -9,6 +9,7 @@ from django.db.models.functions import Lower
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.core import signing
+from django.http import JsonResponse
 
 from . models import Hotel
 from . forms import HotelImportForm
@@ -176,6 +177,9 @@ def import_hotels(request):
     return render(request, 'hotels/import.html', {'form': form})
 
 
+async def stats_api(request):
+    hotels_count = await Hotel.objects.acount()
+    return JsonResponse({'hotels_count': hotels_count})
     
 
 # === Старая дедакция - отменено ===============================================================

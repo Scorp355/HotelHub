@@ -91,5 +91,17 @@
         7.2 В файл rooms/tests.py в класс RoomModelTests добавлено 2 новых теста:
             1) Номера одного отеля сортируются по полю order.
             2) При одинаковом order используется стабильная сортировка по pk.
+    
+    8. Асинхронная запись
+        8.1 Реализовано:
+            1) hotels/views.py — создано асинхронное представление stats_api, которое получает количество отелей через await Hotel.objects.acount() и возвращает результат в формате JSON.
+            2) config/urls.py — зарегистрирован endpoint GET /api/stats/ с именем api_stats.
+        
+        8.2 hotels/tests.py — добавлен класс AsyncStatsAPITests с тестом test_stats_api_returns_hotels_count
+            Проверяется:
+            1) Endpoint возвращает HTTP-статус 200
+            2) Количество отелей в JSON-ответе совпадает с количеством записей в базе данных.
+            
+
 
 
