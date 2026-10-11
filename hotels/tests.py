@@ -343,3 +343,204 @@ class SeedHotelsCommandTests(TestCase):
         call_command('seed_hotels', stdout=StringIO(), verbosity=0)
         hotel = Hotel.objects.get(name='Grand Astana')
         self.assertEqual(hotel.cover.name, 'hotels/covers/demo/grand-astana.jpg')
+
+
+# ===========================================================================
+class RecentHotelViewsTests(TestCase):
+    """Тесты истории недавно просмотренных отелей."""
+
+    def setUp(self):
+        self.hotels = [
+            Hotel.objects.create(
+                name=f'Hotel {i}',
+                city='Астана',
+                address=f'ул. Тест, {i}',
+                price_night=10000 + i * 1000,
+                rating=4.0,
+            )
+            for i in range(1, 8)
+        ]
+
+    def test_detail_adds_hotel_to_recent_history(self):
+        """Просмотр отеля добавляет его в историю сессии."""
+        hotel = self.hotels[0]
+
+        response = self.client.get(
+            reverse('hotels:hotel_detail', args=[hotel.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.client.session['recently_viewed_hotels'],
+            [hotel.pk],
+        )
+
+    def test_recent_history_places_latest_hotel_first(self):
+        """Последний просмотренный отель находится в начале истории."""
+        first_hotel = self.hotels[0]
+        second_hotel = self.hotels[1]
+
+        self.client.get(
+            reverse('hotels:hotel_detail', args=[first_hotel.pk])
+        )
+        self.client.get(
+            reverse('hotels:hotel_detail', args=[second_hotel.pk])
+        )
+
+        self.assertEqual(
+            self.client.session['recently_viewed_hotels'],
+            [second_hotel.pk, first_hotel.pk],
+        )
+
+    def test_repeated_view_does_not_create_duplicate(self):
+        """Повторный просмотр перемещает отель в начало без дубликата."""
+        first_hotel = self.hotels[0]
+        second_hotel = self.hotels[1]
+
+        self.client.get(
+            reverse('hotels:hotel_detail', args=[first_hotel.pk])
+        )
+        self.client.get(
+            reverse('hotels:hotel_detail', args=[second_hotel.pk])
+        )
+        self.client.get(
+            reverse('hotels:hotel_detail', args=[first_hotel.pk])
+        )
+
+        history = self.client.session['recently_viewed_hotels']
+
+        self.assertEqual(
+            history,
+            [first_hotel.pk, second_hotel.pk],
+        )
+        self.assertEqual(len(history), len(set(history)))
+
+    def test_recent_history_contains_at_most_five_hotels(self):
+        """В истории сохраняются максимум пять последних отелей."""
+        for hotel in self.hotels[:6]:
+            self.client.get(
+                reverse('hotels:hotel_detail', args=[hotel.pk])
+            )
+
+        history = self.client.session['recently_viewed_hotels']
+
+        self.assertEqual(len(history), 5)
+        self.assertEqual(
+            history,
+            [hotel.pk for hotel in reversed(self.hotels[:6])][:5],
+        )
+
+    def test_hotel_list_displays_recently_viewed_hotels_in_context(self):
+        """Список отелей получает историю просмотров из сессии."""
+        first_hotel = self.hotels[0]
+        second_hotel = self.hotels[1]
+
+        session = self.client.session
+        session['recently_viewed_hotels'] = [
+            second_hotel.pk,
+            first_hotel.pk,
+        ]
+        session.save()
+
+        response = self.client.get(reverse('hotels:hotel_list'))
+
+        self.assertEqual(response.status_code, 200)
+        recent_hotels = response.context['recently_viewed_hotels']
+
+        self.assertEqual(
+            [hotel.pk for hotel in recent_hotels],
+            [second_hotel.pk, first_hotel.pk],
+        )
+
+    def test_inactive_hotel_is_excluded_from_recent_history_context(self):
+        """Неактивные отели не отображаются в истории просмотров."""
+        active_hotel = self.hotels[0]
+        inactive_hotel = self.hotels[1]
+
+        inactive_hotel.is_active = False
+        inactive_hotel.save()
+
+        session = self.client.session
+        session['recently_viewed_hotels'] = [
+            inactive_hotel.pk,
+            active_hotel.pk,
+        ]
+        session.save()
+
+        response = self.client.get(reverse('hotels:hotel_list'))
+
+        recent_hotels = response.context['recently_viewed_hotels']
+
+        self.assertEqual(
+            [hotel.pk for hotel in recent_hotels],
+            [active_hotel.pk],
+        )
+
+
+class HotelCityCookieTests(TestCase):
+    """Тесты сохранения последнего города в подписанной cookie."""
+
+    COOKIE_NAME = 'last_city'
+    COOKIE_MAX_AGE = 30 * 24 * 60 * 60
+
+    def setUp(self):
+        self.url = reverse('hotels:hotel_list')
+
+    def set_city_cookie(self, city):
+        """Устанавливает корректно подписанную cookie."""
+        from django.core import signing
+
+        signer = signing.get_cookie_signer(salt=self.COOKIE_NAME)
+        self.client.cookies[self.COOKIE_NAME] = signer.sign(city)
+
+    def test_city_is_saved_in_signed_cookie(self):
+        """Город сохраняется в подписанную cookie на 30 дней."""
+        response = self.client.get(self.url, {'city': 'Астана'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.COOKIE_NAME, response.cookies)
+        self.assertEqual(
+        response.cookies[self.COOKIE_NAME]['max-age'],
+        self.COOKIE_MAX_AGE,
+        )
+
+    def test_city_is_restored_from_cookie(self):
+        """Без GET-параметра город восстанавливается из cookie."""
+        self.client.get(self.url, {'city': 'Астана'})
+
+        response = self.client.get(self.url)
+    
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['city'], 'Астана')
+
+
+    def test_get_city_overrides_saved_cookie(self):
+        """Новый город в GET-параметре имеет приоритет над cookie."""
+        self.client.get(self.url, {'city': 'Алматы'})
+
+        response = self.client.get(self.url, {'city': 'Астана'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['city'], 'Астана')
+
+    def test_empty_city_clears_saved_cookie(self):
+        """Явный пустой поиск удаляет сохранённый город."""
+        self.client.get(self.url, {'city': 'Алматы'})
+
+        response = self.client.get(self.url, {'city': ''})
+    
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['city'], '')
+        self.assertEqual(
+            response.cookies[self.COOKIE_NAME]['max-age'],
+            0,
+        )
+    
+    def test_tampered_cookie_is_ignored(self):
+        """Cookie с неправильной подписью игнорируется."""
+        self.client.cookies[self.COOKIE_NAME] = 'forged-invalid-signature'
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['city'], '')

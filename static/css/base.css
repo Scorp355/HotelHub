@@ -200,6 +200,13 @@ a:hover {
     border-color: var(--theme-accent);
 }
 
+/* ---------- Блок последних просмотренных отелей ---------*/
+.recently-viewed__list {
+    display: flex;
+    gap: 20px;
+    margin: 24px 0;
+}
+
 /* ---------- Кнопки ---------- */
 
 .btn,

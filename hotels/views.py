@@ -1,5 +1,6 @@
 import csv
 import io
+from urllib.parse import quote, unquote
 
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -7,6 +8,7 @@ from django.db import transaction
 from django.db.models.functions import Lower
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
+from django.core import signing
 
 from . models import Hotel
 from . forms import HotelImportForm
@@ -19,6 +21,34 @@ class HotelListView(ListView):
     context_object_name = 'hotels'
     paginate_by = 6
 
+    COOKIE_NAME = 'last_city'
+    COOKIE_MAX_AGE = 30 * 24 * 60 * 60      # 30 дней
+
+    def get_city(self):
+        """Возвращает город из GET или подписанной cookie."""
+        if 'city' in self.request.GET:
+            return self.request.GET.get('city', '').strip()
+
+        try:
+            saved_city = self.request.get_signed_cookie(self.COOKIE_NAME, default='')
+        except signing.BadSignature:
+            return ''
+        return unquote(saved_city)
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        if 'city' in request.GET:
+            city = request.GET.get('city', '').strip()
+
+            if city:
+                encoded_city = quote(city, safe='')
+                response.set_signed_cookie(self.COOKIE_NAME, encoded_city,
+                                           max_age=self.COOKIE_MAX_AGE)
+            else:
+                response.delete_cookie(self.COOKIE_NAME)
+        return response
+
     SORTS = {
         'price': 'min_price',
         '-price': '-min_price',
@@ -27,7 +57,8 @@ class HotelListView(ListView):
 
     def get_queryset(self):
         hotels = Hotel.objects.active().with_stats()
-        city = self.request.GET.get('city', '')
+        # city = self.request.GET.get('city', '')
+        city = self.get_city()
         if city:
             hotels = hotels.annotate(city_lower=Lower('city')).filter(city_lower__contains=city.lower())
         sort_by = self.request.GET.get('sort', '')
@@ -35,13 +66,31 @@ class HotelListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['city'] = self.request.GET.get('city', '')
+        context['city'] = self.get_city()
         context['sort'] = self.request.GET.get('sort', '')
+
+        # Последние просмотренные отели
+        recent_ids = self.request.session.get('recently_viewed_hotels', [])
+        hotels_by_id = Hotel.objects.active().in_bulk(recent_ids)
+        context['recently_viewed_hotels'] = [
+            hotels_by_id[hotel_id] for hotel_id in recent_ids if hotel_id in hotels_by_id
+        ]
+
         return context        
 
 
 def hotel_detail(request, pk):
     hotel = get_object_or_404(Hotel.objects.with_stats(), pk=pk, is_active=True)
+
+    # Получаем историю последних просмотров
+    recently_wived = request.session.get('recently_viewed_hotels', [])
+    # Убираем текущий отель из списка, чтобы избежать дублей
+    hotel_id = hotel.pk
+    recently_wived = [item for item in recently_wived if item != hotel_id]
+    recently_wived.insert(0, hotel_id)
+    # Сохраняем только 5 последних просмотров
+    request.session['recently_viewed_hotels'] = recently_wived[:5]
+
     rooms = hotel.rooms.on_sale().with_today_status()
     return render(request, 'hotels/hotel_detail.html', {
         'hotel': hotel,

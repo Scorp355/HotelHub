@@ -43,7 +43,22 @@
     {% endif %}
 </p>
 
+{% if recently_viewed_hotels %}
+<section class="recently-viewed">
+    <h2 class="recently-viewed__title">Вы недавно смотрели</h2>
+
+    <div class="recently-viewed__list">
+        {% for hotel in recently_viewed_hotels %}
+        <a href="{% url 'hotels:hotel_detail' hotel.pk %}" class="recently-viewed__item">
+            {{ hotel.name }}   
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
 {% if hotels %}
+<h2>Каталог отелей</h2>
 <div class="card-grid">
     {% for hotel in hotels %}
     {% include 'hotels/_card.html' with hotel=hotel %}
