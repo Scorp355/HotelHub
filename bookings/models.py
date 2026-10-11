@@ -60,3 +60,8 @@ class Booking(models.Model):
         if nights < 0:
             nights = 0
         return self.room.price_night * nights
+
+    @property
+    def vaucher_token(self):
+        from .voucher import create_voucher_token
+        return create_voucher_token(self)

@@ -21,6 +21,13 @@
         </div>
         <div class="booking-side">
             <span class="price">{{ booking.total_price|intcomma }} ₸</span>
+
+            {% if booking.status == 'confirmed' %}
+            <a href="{% url 'bookings:voucher' token=booking.voucher_token %}" class="btn btn-outline btn-sm">
+                Открыть ваучер
+            </a>
+            {% endif %}
+
             {% if booking.status != 'cancelled' %}
             <form action="{% url 'bookings:cancel' booking.pk %}" method="post">
                 {% csrf_token %}

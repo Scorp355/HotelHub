@@ -3,11 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import Http404
 
 from rooms.models import Room
 from bookings.models import Booking
 from .forms import BookingForm
 from . import services
+from . voucher import create_voucher_token, get_booking_by_vaucher_token
 
 
 @login_required
@@ -55,4 +57,10 @@ def booking_cancel(request, pk):
         messages.error(request, exc.messages[0])
 
     return redirect('bookings:list')
+
+
+def booking_voucher(request, token):
+    """Публичная страница ваучера подтверждённого бронирования."""
+    booking = get_booking_by_vaucher_token(token)
+    return render(request, 'bookings/voucher.html', {'booking': booking})
             

@@ -8,4 +8,5 @@ urlpatterns = [
         path('', views.booking_list, name='list'),
         path('create/<int:room_id>/', views.booking_create, name='create'),
         path('cancel/<int:pk>/', views.booking_cancel, name='cancel'),
+        path('voucher/<str:token>/', views.booking_voucher, name='voucher'),
     ]

@@ -1,15 +1,18 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core import signing
 
 from hotels.models import Hotel
 from rooms.models import Room
 from bookings.models import Booking
 from bookings import services
+from bookings.voucher import create_voucher_token, VOUCHER_SALT
 
 
 User = get_user_model()
@@ -279,3 +282,121 @@ class SeedBookingsCommandTests(TestCase):
         count_first = Booking.objects.count()
         call_command('seed_bookings', stdout=StringIO(), verbosity=0)
         self.assertEqual(Booking.objects.count(), count_first)
+
+
+
+class BookingVoucherTests(TestCase):
+    """Автотесты публичного ваучера бронирования."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+        username=f'voucher_guest_{self.id().split(".")[-1]}',
+        password='test_password123',
+        )
+        
+        self.user = User.objects.create_user(
+            username='voucher_guest',
+            password='test_password123',
+        )
+        self.hotel = Hotel.objects.create(
+            name='Voucher Test Hotel',
+            description='Тестовый отель для проверки ваучеров',
+            city='Астана',
+            address='Тестовая улица, 1',
+            price_night=Decimal('15000.00'),
+            rating=4.5,
+            is_active=True,
+        )
+        self.room = Room.objects.create(
+            hotel=self.hotel,
+            number='101',
+            room_type='double',
+            description='Тестовый номер',
+            price_night=Decimal('15000.00'),
+            capacity=2,
+            is_available=True,
+        )
+        self.booking = Booking.objects.create(
+            user=self.user,
+            room=self.room,
+            check_in=date.today() + timedelta(days=2),
+            check_out=date.today() + timedelta(days=4),
+            guests=2,
+            status='confirmed',
+        )
+
+    def get_voucher_url(self, token):
+        return reverse(
+            'bookings:voucher',
+            kwargs={'token': token},
+        )
+
+    def test_confirmed_booking_voucher_opens_without_login(self):
+        """Подтверждённый ваучер доступен без авторизации."""
+        token = create_voucher_token(self.booking)
+
+        response = self.client.get(self.get_voucher_url(token))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.hotel.name)
+        self.assertContains(response, str(self.booking.pk))
+
+    def test_forged_token_returns_404(self):
+        """Поддельный токен не открывает ваучер."""
+        response = self.client.get(
+            self.get_voucher_url('forged-invalid-token')
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_expired_token_returns_404(self):
+        """Просроченный токен не открывает ваучер."""
+        token = create_voucher_token(self.booking)
+
+        # Отрицательный срок гарантированно делает токен просроченным.
+        with patch('bookings.voucher.VOUCHER_MAX_AGE', -1):
+            response = self.client.get(self.get_voucher_url(token))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_pending_booking_voucher_returns_404(self):
+        """Для неподтверждённой брони ваучер недоступен."""
+        pending_booking = Booking.objects.create(
+            user=self.user,
+            room=self.room,
+            check_in=date.today() + timedelta(days=10),
+            check_out=date.today() + timedelta(days=12),
+            guests=1,
+            status='pending',
+        )
+
+        # Создаём корректно подписанный токен для проверки статуса брони.
+        signer = signing.TimestampSigner(salt=VOUCHER_SALT)
+        token = signer.sign(str(pending_booking.pk))
+
+        response = self.client.get(self.get_voucher_url(token))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_voucher_token_contains_booking_id(self):
+        """Подписанный токен содержит идентификатор брони."""
+        token = create_voucher_token(self.booking)
+
+        signer = signing.TimestampSigner(salt=VOUCHER_SALT)
+        booking_id = signer.unsign(token, max_age=7 * 24 * 60 * 60)
+
+        self.assertEqual(booking_id, str(self.booking.pk))
+
+    def test_voucher_token_cannot_be_created_for_pending_booking(self):
+        """Нельзя создать ваучер для ожидающей подтверждения брони."""
+        pending_booking = Booking.objects.create(
+            user=self.user,
+            room=self.room,
+            check_in=date.today() + timedelta(days=15),
+            check_out=date.today() + timedelta(days=17),
+            guests=1,
+            status='pending',
+        )
+
+        with self.assertRaises(ValueError):
+            create_voucher_token(pending_booking)
