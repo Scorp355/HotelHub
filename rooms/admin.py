@@ -5,9 +5,10 @@ from .models import Room
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('image_preview', 'number', 'hotel', 'room_type', 'price_night', 'capacity', 'is_available')
+    list_display = ('image_preview', 'number', 'hotel', 'room_type', 'price_night', 'capacity', 'is_available', 'order')
     list_filter = ('hotel', 'room_type', 'is_available')
     search_fields = ('number', 'hotel__name')
+    list_editable = ('order',)
 
     def image_preview(self, obj):
         """Миниатюра фото номера в списке админки."""

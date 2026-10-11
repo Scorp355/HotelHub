@@ -66,6 +66,9 @@ class Room(models.Model):
     # дата создания записи
     created_at = models.DateTimeField(auto_now_add=True)
 
+    order = models.PositiveSmallIntegerField(default=0, verbose_name='Порядок отображения',
+                                             help_text='Чем меньше число, тем выше номер в списке')
+
     image = models.ImageField('Фото номера', upload_to=room_image_path, blank=True, null=True,
                               validators=[FileExtensionValidator(ALLOVED_IMAGE_EXTENSIONS),
                                           validate_images_size],
@@ -77,7 +80,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = 'Номер'  # в единственном числе
         verbose_name_plural = 'Номера' # в множественном числе
-        ordering = ['-created_at']  # сортировка по дате создания записи
+        ordering = ['order', 'pk']
         constraints = [models.UniqueConstraint(fields=['hotel', 'number'], name='room_unique_number_hotel')]
         indexes = [models.Index(fields=['is_available', 'room_type'], name='room_available_type_idx')]
 

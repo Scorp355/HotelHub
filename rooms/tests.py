@@ -51,6 +51,62 @@ class RoomModelTests(TestCase):
                            room_type='single', price_night=12000)
         self.assertEqual(Room.objects.filter(number='101').count(), 2)
 
+    # --- В рамках задания В.3 ------------------------------------------
+    def test_rooms_are_ordered_by_order(self):
+        """Номера одного отеля сортируются по полю order."""
+        Room.objects.create(
+            hotel=self.hotel,
+            number='103',
+            room_type='single',
+            price_night=12000,
+            order=2,
+        )
+        Room.objects.create(
+            hotel=self.hotel,
+            number='101',
+            room_type='single',
+            price_night=10000,
+            order=0,
+        )
+        Room.objects.create(
+            hotel=self.hotel,
+            number='102',
+            room_type='single',
+            price_night=11000,
+            order=1,
+        )
+
+        rooms = list(Room.objects.filter(hotel=self.hotel))
+
+        self.assertEqual(
+            [room.number for room in rooms],
+            ['101', '102', '103'],
+        )
+
+    def test_rooms_with_same_order_are_sorted_by_pk(self):
+        """При одинаковом order используется стабильная сортировка по pk."""
+        first_room = Room.objects.create(
+            hotel=self.hotel,
+            number='101',
+            room_type='single',
+            price_night=10000,
+            order=1,
+        )
+        second_room = Room.objects.create(
+            hotel=self.hotel,
+            number='102',
+            room_type='single',
+            price_night=11000,
+            order=1,
+        )
+
+        rooms = list(Room.objects.filter(hotel=self.hotel))
+
+        self.assertEqual(
+            [room.pk for room in rooms],
+            [first_room.pk, second_room.pk],
+        )
+
 
 class RoomListViewTests(TestCase):
     """Тесты списка номеров и поиска."""
