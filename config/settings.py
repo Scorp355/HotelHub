@@ -26,12 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'rest_framework',
     # Приложения проекта
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
     'hotels.apps.HotelsConfig',
     'rooms.apps.RoomsConfig',
-    'bookings.apps.BookingsConfig',    
+    'bookings.apps.BookingsConfig',  
+    'api.apps.ApiConfig',  
 ]
 
 CACHES = {
@@ -133,3 +135,23 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'users:profile'
 LOGOUT_REDIRECT_URL = 'core:home'
+
+REST_FRAMEWORK = {
+# Аутентификация через пользовательскую сессию Django
+'DEFAULT_AUTHENTICATION_CLASSES': [
+'rest_framework.authentication.SessionAuthentication',
+],
+
+# По умолчанию публичное чтение.
+# Для создания бронирований зададим IsAuthenticated отдельно.
+'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.AllowAny',
+],
+
+# Пагинация списков
+'DEFAULT_PAGINATION_CLASS': (
+    'rest_framework.pagination.PageNumberPagination'
+),
+'PAGE_SIZE': 10,
+
+}
