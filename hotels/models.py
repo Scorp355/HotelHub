@@ -1,6 +1,7 @@
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Count, Min, OuterRef, Subquery, Case, When, Value, Q, CharField
+from django.db.models import (Count, Min, OuterRef, Subquery, Case, When, Value, Q, CharField,
+                              Avg)
 
 from core.validators import ALLOVED_IMAGE_EXTENSIONS, validate_images_size
 
@@ -13,6 +14,7 @@ class HotelQuerySet(models.QuerySet):
         return self.annotate(
             min_price=Min('rooms__price_night'),
             rooms_count=Count('rooms', distinct=True),
+            avg_rating=Avg('reviews__rating', filter=Q(reviews__is_approved=True)),
             category=Case(
                 When(rating__gte=4.5, then=Value('Премиум')),
                 default=Value('Стандарт'),

@@ -10,9 +10,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.core import signing
 from django.http import JsonResponse
+from django.utils import timezone
 
 from . models import Hotel
 from . forms import HotelImportForm
+from reviews.models import Review
+from bookings.models import Booking
+
 
 
 class HotelListView(ListView):
@@ -93,9 +97,30 @@ def hotel_detail(request, pk):
     request.session['recently_viewed_hotels'] = recently_wived[:5]
 
     rooms = hotel.rooms.on_sale().with_today_status()
+
+    # Публично отображаются только одобренные отзывы
+    reviews = hotel.reviews.filter(is_approved=True).select_related('user')
+
+    # Данные об отзыве текущего пользователя
+    user_review = None
+    can_review = False
+
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(hotel=hotel, user=request.user).first()
+        # Проверяем наличие завершённого проживания
+        can_review = Booking.objects.filter(
+            user=request.user,
+            room__hotel=hotel,
+            status='confirmed',
+            check_out__lt=timezone.localdate(),
+        ).exists()
+
     return render(request, 'hotels/hotel_detail.html', {
         'hotel': hotel,
-        'rooms': rooms
+        'rooms': rooms,
+        'reviews': reviews,
+        'user_review': user_review,
+        'can_review': can_review,
     })
 
 

@@ -16,6 +16,7 @@ urlpatterns = [
     path('bookings', include('bookings.urls')),
     path('api/', include('api.urls')),
     path('api/stats/', stats_api, name='api_stats'),
+    path('reviews/', include('reviews.urls')),
 ]
 
 # В режиме разработки отдаем загруженные медиафайлы напрямую через Django.

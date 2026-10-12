@@ -595,9 +595,11 @@ a:hover {
 
 .detail-meta {
     display: flex;
+    flex-direction: column;
     gap: 20px;
-    align-items: center;
+    align-items: flex-start;
     margin: 12px 0 18px;
+    width: 100%;
 }
 
 .detail-desc {
@@ -802,4 +804,85 @@ a:hover {
 .hotel-category--standard {
     background-color: #e8edf2;
     color: #455468;
+}
+
+
+
+/*Блок Д. Изменения для карточек отелей*/
+
+/* Рейтинги в карточке отеля */
+.hotel-ratings {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: #f7f8fa;
+    border: 1px solid #e8ebef;
+    border-radius: 12px;
+}
+
+.hotel-ratings__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    min-width: 0;
+}
+
+.hotel-ratings__label {
+    color: #687386;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.hotel-ratings__score {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    color: #202938;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.hotel-ratings__star {
+    color: #e8a126;
+    font-size: 17px;
+}
+
+.hotel-ratings__out-of {
+    color: #7b8492;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.hotel-ratings__divider {
+    width: 1px;
+    height: 38px;
+    background: #dfe3e8;
+}
+
+.hotel-ratings__empty {
+    color: #7b8492;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Компактный вариант для узких карточек */
+@media (max-width: 420px) {
+    .hotel-ratings {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .hotel-ratings__label {
+        font-size: 11px;
+    }
+
+    .hotel-ratings__score {
+        font-size: 18px;
+    }
 }

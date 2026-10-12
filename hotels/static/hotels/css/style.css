@@ -8,6 +8,47 @@ body.theme-hotels .rating {
 }
 
 
+/*Для приложения reviews*/
+
+
+.review-form {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.review-form__field {
+    margin-bottom: 20px;
+}
+
+.review-form__select,
+.review-form__textarea {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.review-form__textarea {
+    resize: vertical;
+}
+
+.review-form__button {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+}
+
 
 /* * {
     margin: 0;

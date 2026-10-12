@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'hotels.apps.HotelsConfig',
     'rooms.apps.RoomsConfig',
     'bookings.apps.BookingsConfig',  
-    'api.apps.ApiConfig',  
+    'api.apps.ApiConfig', 
+    'reviews.apps.ReviewsConfig', 
 ]
 
 CACHES = {

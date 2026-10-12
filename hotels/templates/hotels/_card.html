@@ -27,8 +27,32 @@
         {% else %}
         <span class="price">{{ hotel.price|intcomma }} ₸ / ночь</span>
         {% endif %}
+    </div>
 
-        <span class="rating">★ {{ hotel.rating|floatformat:1 }}</span>
+    <div class="hotel-ratings">
+        <div class="hotel-ratings__item">
+            <span class="hotel-ratings__label">Оценка персонала</span>
+            <span class="hotel-ratings__score">
+                <span class="hotel-ratings__star">★</span>
+                {{ hotel.rating|floatformat:1 }}
+                <span class="hotel-ratings__out-of">/ 5</span>
+            </span>
+        </div>
+
+        <div class="hotel-ratings__divider"></div>
+
+        <div class="hotel-ratings__item">
+            <span class="hotel-ratings__label">Оценка гостей</span>
+            {% if hotel.avg_rating is not None %}
+            <span class="hotel-ratings__score">
+                <span class="hotel-ratings__star">★</span>
+                {{ hotel.avg_rating|floatformat:1 }}
+                <span class="hotel-ratings__out-of">/ 5</span>
+            </span>
+            {% else %}
+            <span class="hotel-ratings__empty">Пока нет отзывов</span>
+            {% endif %}
+        </div>
 
         {% if hotel.category == 'Премиум' %}
         <span class="hotel-category hotel-category--premium">
